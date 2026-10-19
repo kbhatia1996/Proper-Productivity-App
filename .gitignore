@@ -1,0 +1,43 @@
+# Xcode
+build/
+.xcodeproj/
+.xcworkspace/
+xcUserData/
+*.xcarchive
+*.dSYM
+
+# Swift
+.build/
+.swiftpm/
+*.xcconfig
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Firebase
+GoogleService-Info.plist
+
+# Environment & Secrets
+.env
+.env.local
+.secrets
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Misc
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing
+.coverage
+coverage/
+
+# IDE
+.idea/
+*.iml
