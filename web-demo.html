@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proper Discipline App - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d0d14;
+            color: #eaeaf2;
+            overflow: hidden;
+        }
+
+        .phone-frame {
+            width: 390px;
+            height: 844px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(242, 198, 52, 0.2);
+            border: 8px solid #1a1a1f;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 25px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #26142e 0%, #1a0f23 100%);
+            border-radius: 30px;
+            overflow-y: auto;
+            padding: 40px 20px 20px;
+            display: none;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .screen::-webkit-scrollbar-track {
+            background: rgba(242, 198, 52, 0.1);
+        }
+
+        .screen::-webkit-scrollbar-thumb {
+            background: #f2c634;
+            border-radius: 2px;
+        }
+
+        /* Auth Screen */
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #f2c634;
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            color: rgba(234, 234, 242, 0.7);
+        }
+
+        .tab-group {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 0;
+            background: rgba(242, 198, 52, 0.1);
+            border-radius: 8px;
+            padding: 2px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+            color: #eaeaf2;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #f2c634;
+            color: #0d0d14;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 6px;
+            color: rgba(234, 234, 242, 0.8);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(242, 198, 52, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            color: #eaeaf2;
+            font-size: 14px;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(234, 234, 242, 0.4);
+        }
+
+        .avatar-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .avatar-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(242, 198, 52, 0.1);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: #eaeaf2;
+            cursor: pointer;
+            font-size: 28px;
+            transition: all 0.3s;
+        }
+
+        .avatar-btn.selected {
+            border-color: #f2c634;
+            background: rgba(242, 198, 52, 0.2);
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 8px 0;
+        }
+
+        .btn-primary {
+            background: #f2c634;
+            color: #0d0d14;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #e6b600;
+            box-shadow: 0 8px 20px rgba(242, 198, 52, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #eaeaf2;
+            border: 2px solid rgba(242, 198, 52, 0.5);
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            border-color: #f2c634;
+            background: rgba(242, 198, 52, 0.1);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 13px;
+            margin: 4px 0;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(26, 15, 35, 0.8);
+            border: 1px solid rgba(242, 198, 52, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            color: #f2c634;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .card p {
+            font-size: 12px;
+            color: rgba(234, 234, 242, 0.7);
+            margin-bottom: 8px;
+        }
+
+        /* Nest Setup */
+        .option-card {
+            background: rgba(26, 15, 35, 0.8);
+            border: 2px solid rgba(242, 198, 52, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 16px;
+        }
+
+        .option-card:hover {
+            border-color: #f2c634;
+            background: rgba(242, 198, 52, 0.1);
+        }
+
+        .option-card .icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .option-card h3 {
+            color: #eaeaf2;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .option-card p {
+            font-size: 12px;
+            color: rgba(234, 234, 242, 0.6);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: flex-end;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #26142e;
+            width: 100%;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #f2c634;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Dashboard */
+        .stat-card {
+            background: rgba(26, 15, 35, 0.8);
+            border: 1px solid rgba(242, 198, 52, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card .avatar {
+            font-size: 32px;
+            margin-right: 12px;
+        }
+
+        .stat-card .info h3 {
+            color: #f2c634;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .info p {
+            font-size: 11px;
+            color: rgba(234, 234, 242, 0.6);
+        }
+
+        .task-card {
+            background: rgba(26, 15, 35, 0.8);
+            border: 1px solid rgba(242, 198, 52, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-card .left {
+            flex: 1;
+        }
+
+        .task-card h4 {
+            color: #f2c634;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .task-card p {
+            font-size: 11px;
+            color: rgba(234, 234, 242, 0.6);
+            margin-bottom: 4px;
+        }
+
+        .checkpoint-info {
+            font-size: 10px;
+            color: #f2c634;
+            margin-top: 4px;
+        }
+
+        .checkbox {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #7a7a7a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 20px;
+        }
+
+        .checkbox:hover {
+            border-color: #f2c634;
+        }
+
+        .checkbox.checked {
+            border-color: #33cc33;
+            background: rgba(51, 204, 51, 0.2);
+        }
+
+        .section-title {
+            color: #f2c634;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 16px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 12px;
+            color: rgba(234, 234, 242, 0.5);
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="notch"></div>
+
+        <!-- Auth Screen -->
+        <div class="screen active" id="authScreen">
+            <div class="logo">
+                <h1>PROPER DISCIPLINE</h1>
+                <p>Couples' Leveling System</p>
+            </div>
+
+            <div class="tab-group">
+                <button class="tab active" onclick="switchTab('signin')">Sign In</button>
+                <button class="tab" onclick="switchTab('signup')">Sign Up</button>
+            </div>
+
+            <div id="signin-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="your@email.com" value="pigeon1@test.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="••••••••" value="password123">
+                </div>
+                <button class="btn btn-primary" onclick="goToNestSetup()">Sign In</button>
+            </div>
+
+            <div id="signup-form" style="display: none;">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" placeholder="Your name" value="Pigeon1">
+                </div>
+                <div class="form-group">
+                    <label>Choose Avatar</label>
+                    <div class="avatar-group">
+                        <button class="avatar-btn selected" onclick="selectAvatar(this)">🐦</button>
+                        <button class="avatar-btn" onclick="selectAvatar(this)">🕊️</button>
+                        <button class="avatar-btn" onclick="selectAvatar(this)">🦅</button>
+                        <button class="avatar-btn" onclick="selectAvatar(this)">🦜</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="••••••••">
+                </div>
+                <button class="btn btn-primary" onclick="goToNestSetup()">Create Account</button>
+            </div>
+        </div>
+
+        <!-- Nest Setup Screen -->
+        <div class="screen" id="nestSetupScreen">
+            <h2 style="text-align: center; color: #f2c634; margin-bottom: 20px; font-size: 18px;">CREATE OR JOIN A NEST</h2>
+
+            <div class="option-card" onclick="showCreateNestModal()">
+                <div class="icon">🏠</div>
+                <h3>Create Nest</h3>
+                <p>Start fresh with your partner</p>
+            </div>
+
+            <div class="option-card" onclick="showJoinNestModal()">
+                <div class="icon">🔗</div>
+                <h3>Join Nest</h3>
+                <p>Use invite code from partner</p>
+            </div>
+
+            <div style="flex: 1;"></div>
+
+            <button class="btn btn-secondary btn-small" onclick="goToAuth()">Sign Out</button>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div class="screen" id="dashboardScreen">
+            <div class="stat-card">
+                <div style="display: flex; align-items: center;">
+                    <div class="avatar">🐦</div>
+                    <div class="info">
+                        <h3>Pigeon1</h3>
+                        <p>Rank: D | XP: 250</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🏠 Karan & Sam's Nest</h3>
+                <p>Invite Code: <strong>ABC123</strong></p>
+            </div>
+
+            <div class="section-title">📋 Personal Tasks</div>
+
+            <div class="task-card">
+                <div class="left">
+                    <h4>📚 Morning Reading</h4>
+                    <p>Read for 30 minutes</p>
+                    <div class="checkpoint-info">Next: 4-hour gaming (0/4 days)</div>
+                </div>
+                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+            </div>
+
+            <div class="task-card">
+                <div class="left">
+                    <h4>🏃 Daily Exercise</h4>
+                    <p>30 mins workout</p>
+                    <div class="checkpoint-info">Next: Movie night (0/8 days)</div>
+                </div>
+                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+            </div>
+
+            <div class="task-card">
+                <div class="left">
+                    <h4>📿 Meditation</h4>
+                    <p>10 mins mindfulness</p>
+                    <div class="checkpoint-info">Next: Date night (0/16 days)</div>
+                </div>
+                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
+            </div>
+
+            <button class="btn btn-primary btn-small" onclick="showCreateTaskModal()" style="margin-top: 16px;">➕ NEW TASK</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="createNestModal">
+        <div class="modal-content">
+            <div class="modal-header">Create Your Nest</div>
+            <div class="form-group">
+                <label>Nest Name</label>
+                <input type="text" placeholder="e.g., Karan & Sam's Nest" value="Karan & Sam's Nest">
+            </div>
+            <div class="form-group">
+                <label>Theme</label>
+                <select>
+                    <option>Dark Purple</option>
+                    <option>Gold & Black</option>
+                    <option>Silver & Black</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="goToDashboard()">Create Nest</button>
+            <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal" id="joinNestModal">
+        <div class="modal-content">
+            <div class="modal-header">Join a Nest</div>
+            <div class="form-group">
+                <label>Invite Code</label>
+                <input type="text" placeholder="e.g., ABC123" value="ABC123">
+            </div>
+            <p style="font-size: 11px; color: rgba(234, 234, 242, 0.6); margin-bottom: 16px;">6 characters, ask your partner for the code</p>
+            <button class="btn btn-primary" onclick="goToDashboard()">Join Nest</button>
+            <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal" id="createTaskModal">
+        <div class="modal-content">
+            <div class="modal-header">Create New Task</div>
+            <div class="form-group">
+                <label>Task Name</label>
+                <input type="text" placeholder="e.g., Morning Reading">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" placeholder="What do you need to do?">
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select>
+                    <option>Personal</option>
+                    <option>Shared</option>
+                </select>
+            </div>
+            <div style="background: rgba(26, 15, 35, 0.5); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                <p style="font-size: 12px; color: #f2c634; margin-bottom: 8px;">Checkpoints & Deservings</p>
+                <div class="form-group">
+                    <label>Days</label>
+                    <input type="number" value="4">
+                </div>
+                <div class="form-group">
+                    <label>Deserving</label>
+                    <input type="text" placeholder="e.g., 4-hour gaming">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="closeModals()">Create Task</button>
+            <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            const signinForm = document.getElementById('signin-form');
+            const signupForm = document.getElementById('signup-form');
+            const tabs = document.querySelectorAll('.tab');
+
+            if (tab === 'signin') {
+                signinForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                signinForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        }
+
+        function selectAvatar(btn) {
+            document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        function goToAuth() {
+            showScreen('authScreen');
+        }
+
+        function goToNestSetup() {
+            showScreen('nestSetupScreen');
+        }
+
+        function goToDashboard() {
+            showScreen('dashboardScreen');
+            closeModals();
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function showCreateNestModal() {
+            document.getElementById('createNestModal').classList.add('active');
+        }
+
+        function showJoinNestModal() {
+            document.getElementById('joinNestModal').classList.add('active');
+        }
+
+        function showCreateTaskModal() {
+            document.getElementById('createTaskModal').classList.add('active');
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        }
+
+        function toggleCheckbox(el) {
+            el.classList.toggle('checked');
+            el.innerHTML = el.classList.contains('checked') ? '✓' : '';
+        }
+    </script>
+</body>
+</html>
