@@ -57,7 +57,7 @@ struct DashboardView: View {
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(SoloLevellingTheme.silverWhite)
                                 Text("Invite: \(nest.inviteCode)")
-                                    .font(.system(size: 11, weight: .monospaced))
+                                    .font(.system(size: 11, design: .monospaced))
                                     .foregroundColor(SoloLevellingTheme.silverWhite.opacity(0.6))
                             }
                             Spacer()
@@ -286,7 +286,14 @@ struct NewTaskSheet: View {
                     
                     ForEach(0..<3, id: \.self) { index in
                         VStack(spacing: 8) {
-                            TextField("Days", value: $taskViewModel.checkpointThresholds[safe: index] ?? 0, format: .number)
+                            TextField("Days", value: Binding(
+                                get: { taskViewModel.checkpointThresholds[safe: index] ?? 0 },
+                                set: {
+                                    if index < taskViewModel.checkpointThresholds.count {
+                                        taskViewModel.checkpointThresholds[index] = $0
+                                    }
+                                }
+                            ), format: .number)
                                 .textFieldStyle(.roundedBorder)
                                 .keyboardType(.numberPad)
                             

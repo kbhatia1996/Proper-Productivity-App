@@ -5,7 +5,7 @@ struct Nest: Identifiable, Codable {
     let name: String
     let theme: String  // e.g., "dark_purple", "gold_black"
     let createdBy: String  // Pigeon ID
-    let pigeons: [String]  // Array of Pigeon IDs
+    var pigeons: [String]  // Array of Pigeon IDs
     let inviteCode: String
     let inviteExpiresAt: Date
     let createdAt: Date
