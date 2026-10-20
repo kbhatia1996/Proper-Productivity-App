@@ -168,7 +168,7 @@ func runAll() async {
         vm.switchPeriod(to: .quarterly)
         check(vm.periodTitle == "Q4 2026", "Q4 title")
         check(vm.monthTiles.count == 3, "quarter has 3 month tiles")
-        check(vm.monthTiles.last!.isFuture == false || vm.monthTiles.last!.monthStart <= today, "Dec tile is future")
+        check(vm.monthTiles.last!.isFuture, "Dec tile is future")
         vm.previousPeriod(); vm.previousPeriod()
         check(vm.periodTitle == "Q2 2026", "two quarters back = Q2 (got \(vm.periodTitle))")
         
