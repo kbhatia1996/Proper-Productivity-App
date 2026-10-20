@@ -1,5 +1,5 @@
 ═══════════════════════════════════════════════════════════════════
-  PROPER DISCIPLINE APP – COMPLETE DELIVERABLES
+  PROPER PRODUCTIVE PIGEONS APP – COMPLETE DELIVERABLES
 ═══════════════════════════════════════════════════════════════════
 
 PROJECT REPOSITORY: /tmp/ProperDisciplineApp/
@@ -159,7 +159,7 @@ Package Mgmt:    CocoaPods (for Firebase)
 1. SETUP FIREBASE (5 minutes)
    - Go to Firebase Console
    - Create project "ProperDisciplineApp"
-   - Add iOS app (bundle: com.properDiscipline.app)
+   - Add iOS app (bundle: com.properProductivePigeons.app)
    - Download GoogleService-Info.plist
    - Add to Xcode project
 

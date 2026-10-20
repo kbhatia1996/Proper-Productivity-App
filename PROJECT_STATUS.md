@@ -1,4 +1,4 @@
-# Proper Discipline App – Project Status
+# Proper Productive Pigeons App – Project Status
 
 ## 🎯 Mission
 Build a **Solo Levelling-themed iOS app** for couples ("pigeons") to track daily discipline tasks with exponential checkpoint progression and shared rewards.

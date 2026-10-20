@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proper Productive Pigeons - Fitness Calendar View</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #141419 0%, #1f1426 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 0 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .header-icon {
+            font-size: 18px;
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #333338;
+            color: #e6e6e6;
+        }
+
+        .filter-btn.active {
+            background-color: #ffd700;
+            color: #141419;
+        }
+
+        .filter-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Time Period Selector */
+        .time-period {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px;
+            margin-bottom: 24px;
+        }
+
+        .period-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            background-color: transparent;
+            color: #b3b3b3;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .period-btn.active {
+            border-color: #ffd700;
+            color: #ffd700;
+            background-color: #333338;
+        }
+
+        /* Month Navigation */
+        .month-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .month-nav button {
+            background: none;
+            border: none;
+            color: #ffd700;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .month-nav button:hover {
+            background-color: #333338;
+        }
+
+        .month-nav button:disabled {
+            color: #808080;
+            cursor: not-allowed;
+        }
+
+        .month-nav h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e6e6e6;
+        }
+
+        /* Calendar Grid */
+        .calendar {
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .weekday {
+            font-size: 12px;
+            font-weight: 600;
+            color: #b3b3b3;
+            padding: 8px 0;
+        }
+
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .day {
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            background-color: #262631;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .day:hover {
+            background-color: #333338;
+        }
+
+        .day.today {
+            border-color: #ffd700;
+        }
+
+        /* SVG Progress Circles */
+        .progress-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .day-content {
+            text-align: center;
+            z-index: 1;
+        }
+
+        .day-number {
+            font-size: 12px;
+            font-weight: 600;
+            color: #e6e6e6;
+        }
+
+        .day-star {
+            font-size: 8px;
+            color: #ffd700;
+        }
+
+        /* Warnings */
+        .warning {
+            margin: 16px 20px;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .warning.data-gap {
+            background-color: rgba(255, 178, 0, 0.15);
+            color: #ffb200;
+        }
+
+        .warning.incomplete {
+            background-color: rgba(32, 204, 255, 0.15);
+            color: #20ccff;
+        }
+
+        .warning-icon {
+            font-size: 18px;
+        }
+
+        /* Task Summaries */
+        .task-summaries {
+            padding: 16px 20px;
+        }
+
+        .task-summaries h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffd700;
+            margin-bottom: 12px;
+        }
+
+        .task-summary {
+            background-color: #262631;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .task-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e6e6e6;
+        }
+
+        .task-days {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffd700;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            font-size: 11px;
+            color: #b3b3b3;
+            margin-bottom: 8px;
+        }
+
+        .task-meta.type {
+            color: #b3b3b3;
+        }
+
+        .task-meta.status {
+            color: #20ccff;
+        }
+
+        .task-percentage {
+            font-size: 11px;
+            color: #b3b3b3;
+            text-align: right;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #3d3d45;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #33ccff 0%, #ffd700 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Day Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: flex-end;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #141419 0%, #1f1426 100%);
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #b3b3b3;
+            cursor: pointer;
+        }
+
+        .modal-divider {
+            height: 1px;
+            background-color: #4d4d52;
+            margin-bottom: 16px;
+        }
+
+        .progress-detail {
+            background-color: #262631;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .progress-detail h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #b3b3b3;
+            margin-bottom: 8px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .detail-circle {
+            width: 80px;
+            height: 80px;
+            min-width: 80px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .detail-circle svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .detail-info {
+            flex: 1;
+        }
+
+        .detail-info p {
+            font-size: 13px;
+            color: #e6e6e6;
+            margin-bottom: 4px;
+        }
+
+        .detail-info .deserving {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #ffd700;
+            margin-top: 8px;
+        }
+
+        /* Deserve Celebration Case */
+        .celebration {
+            background: linear-gradient(135deg, #ffd700 0%, #ffb200 100%);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            color: #141419;
+            text-align: center;
+            animation: celebrate 0.6s ease;
+        }
+
+        @keyframes celebrate {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .celebration h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .celebration p {
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .celebration-task {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .celebration-task strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Edge Case: Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #b3b3b3;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .filter-controls {
+                flex-direction: row;
+            }
+
+            .time-period {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Progress Circle</h1>
+            <div class="header-icon">📅</div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-controls">
+            <button class="filter-btn active" onclick="setFilter('personal')">Personal Goals</button>
+            <button class="filter-btn" onclick="setFilter('shared')">Shared Goals</button>
+            <button class="filter-btn" onclick="setFilter('both')">All Goals</button>
+        </div>
+
+        <!-- Time Period -->
+        <div class="time-period">
+            <button class="period-btn active" onclick="setPeriod('weekly')">Weekly</button>
+            <button class="period-btn" onclick="setPeriod('monthly')">Monthly</button>
+            <button class="period-btn" onclick="setPeriod('quarterly')">Quarterly</button>
+            <button class="period-btn" onclick="setPeriod('yearly')">Yearly</button>
+        </div>
+
+        <!-- Month Navigation -->
+        <div class="month-nav">
+            <button onclick="previousMonth()">← Prev</button>
+            <h2 id="monthYear">October 2026</h2>
+            <button onclick="nextMonth()">Next →</button>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="calendar">
+            <div class="weekdays">
+                <div class="weekday">S</div>
+                <div class="weekday">M</div>
+                <div class="weekday">T</div>
+                <div class="weekday">W</div>
+                <div class="weekday">T</div>
+                <div class="weekday">F</div>
+                <div class="weekday">S</div>
+            </div>
+            <div class="days" id="calendarDays"></div>
+        </div>
+
+        <!-- Data Quality Warnings -->
+        <div class="warning data-gap" id="dataGapWarning" style="display: none;">
+            <span class="warning-icon">⚠️</span>
+            <span>Some days have missing data. Check your sync status.</span>
+        </div>
+
+        <div class="warning incomplete" id="incompleteWarning" style="display: none;">
+            <span class="warning-icon">📆</span>
+            <span>Current month is still in progress.</span>
+        </div>
+
+        <!-- Task Summaries -->
+        <div class="task-summaries">
+            <h3 id="summaryTitle">Period Summary (Monthly)</h3>
+            <div id="taskSummariesContainer"></div>
+        </div>
+    </div>
+
+    <!-- Day Detail Modal -->
+    <div class="modal" id="dayModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalDate">Tuesday, October 15, 2026</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <!-- Personal Progress -->
+            <div class="progress-detail">
+                <h3>Personal Goals</h3>
+                <div class="detail-row">
+                    <div class="detail-circle">
+                        <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" fill="#262631" />
+                            <circle cx="60" cy="60" r="54" fill="none" stroke="#33ccff" stroke-width="3"
+                                stroke-dasharray="170 270" stroke-linecap="round" transform="rotate(-90 60 60)" />
+                            <text x="60" y="68" text-anchor="middle" font-size="16" font-weight="700" fill="#e6e6e6">
+                                75%
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="detail-info">
+                        <p>Completion: 75%</p>
+                        <div class="deserving">
+                            <span>⭐</span>
+                            <span>1 deserving claimed</span>
+                        </div>
+                        <div class="deserving">
+                            <strong>Morning Exercise</strong>
+                            <em>4-hour gaming session</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shared Progress -->
+            <div class="progress-detail">
+                <h3>Shared Goals</h3>
+                <div class="detail-row">
+                    <div class="detail-circle">
+                        <svg viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" fill="#262631" />
+                            <circle cx="60" cy="60" r="54" fill="none" stroke="#ffd700" stroke-width="3"
+                                stroke-dasharray="243 270" stroke-linecap="round" transform="rotate(-90 60 60)" />
+                            <text x="60" y="68" text-anchor="middle" font-size="16" font-weight="700" fill="#e6e6e6">
+                                90%
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="detail-info">
+                        <p>Completion: 90%</p>
+                        <div class="deserving">
+                            <span>⭐</span>
+                            <span>2 deservings claimed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Celebrate a Deserving Unlock -->
+            <div class="celebration" id="celebrationBox" style="display: none;">
+                <h4>🎉 Deserving Unlocked!</h4>
+                <p>You've completed the checkpoint!</p>
+                <div class="celebration-task">
+                    <strong id="celebrationTaskName">Morning Meditation</strong>
+                    <div id="celebrationDeserving">2-hour massage session</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMonth = new Date(2026, 9, 15);  // October 2026
+        let currentFilter = 'personal';
+        let currentPeriod = 'monthly';
+
+        // Sample data for calendar
+        const sampleData = {
+            '2026-10-01': { personal: 0, shared: 0, personalCheckpoints: 0, sharedCheckpoints: 0 },
+            '2026-10-02': { personal: 0.25, shared: 0.5, personalCheckpoints: 0, sharedCheckpoints: 0 },
+            '2026-10-03': { personal: 0.5, shared: 0.75, personalCheckpoints: 0, sharedCheckpoints: 1 },
+            '2026-10-05': { personal: 1, shared: 1, personalCheckpoints: 1, sharedCheckpoints: 1 },  // Perfect day
+            '2026-10-08': { personal: 0.75, shared: 0.9, personalCheckpoints: 1, sharedCheckpoints: 2 },
+            '2026-10-10': { personal: 0.6, shared: 0.7, personalCheckpoints: 0, sharedCheckpoints: 0 },
+            '2026-10-15': { personal: 0.75, shared: 0.9, personalCheckpoints: 1, sharedCheckpoints: 2 },
+            '2026-10-20': { personal: 0.95, shared: 1, personalCheckpoints: 2, sharedCheckpoints: 2 },
+            '2026-10-25': { personal: 0.8, shared: 0.85, personalCheckpoints: 1, sharedCheckpoints: 1 },
+        };
+
+        // Task summaries for display
+        const taskSummaries = [
+            {
+                name: 'Morning Exercise',
+                type: 'personal',
+                completed: 18,
+                target: 24,
+                status: 'In Progress'
+            },
+            {
+                name: 'Study Together',
+                type: 'shared',
+                completed: 22,
+                target: 24,
+                status: 'In Progress'
+            },
+            {
+                name: 'Evening Walk',
+                type: 'personal',
+                completed: 20,
+                target: 24,
+                status: 'In Progress'
+            }
+        ];
+
+        function generateCalendar() {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let html = '';
+
+            // Empty days before first day of month
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div style="background: transparent; cursor: default;"></div>';
+            }
+
+            // Days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const data = sampleData[dateStr] || { personal: 0, shared: 0, personalCheckpoints: 0, sharedCheckpoints: 0 };
+
+                const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
+                const hasCheckpoint = data.personalCheckpoints > 0 || data.sharedCheckpoints > 0;
+
+                let personalProgress = currentFilter === 'personal' || currentFilter === 'both' ? data.personal : 0;
+                let sharedProgress = currentFilter === 'shared' || currentFilter === 'both' ? data.shared : 0;
+
+                html += `
+                    <div class="day ${isToday ? 'today' : ''}" onclick="openDayDetail('${dateStr}', ${data.personal}, ${data.shared}, ${data.personalCheckpoints}, ${data.sharedCheckpoints})">
+                        <svg class="progress-svg" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" fill="#262631" />
+                            ${personalProgress > 0 ? `<circle cx="60" cy="60" r="54" fill="none" stroke="#33ccff" stroke-width="3" stroke-dasharray="${personalProgress * 339.292} 339.292" stroke-linecap="round" transform="rotate(-90 60 60)" />` : ''}
+                            ${sharedProgress > 0 ? `<circle cx="60" cy="60" r="48" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-dasharray="${sharedProgress * 301.593} 301.593" stroke-linecap="round" transform="rotate(-90 60 60)" />` : ''}
+                        </svg>
+                        <div class="day-content">
+                            <div class="day-number">${day}</div>
+                            ${hasCheckpoint ? '<div class="day-star">⭐</div>' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('calendarDays').innerHTML = html;
+            updateMonthYear();
+        }
+
+        function updateMonthYear() {
+            const options = { month: 'long', year: 'numeric' };
+            document.getElementById('monthYear').textContent = currentMonth.toLocaleDateString('en-US', options);
+        }
+
+        function previousMonth() {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            generateCalendar();
+        }
+
+        function nextMonth() {
+            const today = new Date();
+            const nextMonth = new Date(currentMonth);
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            if (nextMonth <= today) {
+                currentMonth = nextMonth;
+                generateCalendar();
+            }
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            generateCalendar();
+            generateTaskSummaries();
+        }
+
+        function setPeriod(period) {
+            currentPeriod = period;
+            document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('summaryTitle').textContent = `Period Summary (${period.charAt(0).toUpperCase() + period.slice(1)})`;
+            generateTaskSummaries();
+        }
+
+        function generateTaskSummaries() {
+            let html = '';
+            taskSummaries.forEach(task => {
+                if (currentFilter === 'both' || (currentFilter === 'personal' && task.type === 'personal') || (currentFilter === 'shared' && task.type === 'shared')) {
+                    const percentage = Math.round((task.completed / task.target) * 100);
+                    html += `
+                        <div class="task-summary">
+                            <div class="task-header">
+                                <div class="task-name">${task.name}</div>
+                                <div class="task-days">${task.completed}/${task.target} days</div>
+                            </div>
+                            <div class="task-meta">
+                                <span class="type">${task.type === 'personal' ? 'Personal' : 'Shared'}</span>
+                                <span>•</span>
+                                <span class="status">${task.status}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                            </div>
+                            <div class="task-percentage">${percentage}%</div>
+                        </div>
+                    `;
+                }
+            });
+            document.getElementById('taskSummariesContainer').innerHTML = html;
+        }
+
+        function openDayDetail(dateStr, personalProgress, sharedProgress, personalCheckpoints, sharedCheckpoints) {
+            const date = new Date(dateStr);
+            document.getElementById('modalDate').textContent = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+            // Show celebration if checkpoints were claimed
+            const celebration = document.getElementById('celebrationBox');
+            if (personalCheckpoints > 0 || sharedCheckpoints > 0) {
+                celebration.style.display = 'block';
+                // Update with specific deserving info based on context
+                if (personalCheckpoints > 0) {
+                    document.getElementById('celebrationTaskName').textContent = 'Morning Exercise';
+                    document.getElementById('celebrationDeserving').textContent = '4-hour gaming session';
+                }
+            } else {
+                celebration.style.display = 'none';
+            }
+
+            document.getElementById('dayModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('dayModal').classList.remove('active');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            generateCalendar();
+            generateTaskSummaries();
+
+            // Simulate data gaps warning (edge case)
+            setTimeout(() => {
+                // Uncomment to show warning:
+                // document.getElementById('dataGapWarning').style.display = 'flex';
+                // document.getElementById('incompleteWarning').style.display = 'flex';
+            }, 500);
+        });
+    </script>
+</body>
+</html>

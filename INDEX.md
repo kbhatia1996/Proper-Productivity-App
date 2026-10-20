@@ -1,4 +1,4 @@
-# 🎮 Proper Discipline App – Complete Project Index
+# 🎮 Proper Productive Pigeons App – Complete Project Index
 
 ## 📍 Where to Start
 
@@ -167,7 +167,7 @@ swift --version           # Need Swift 5.7+
 
 ### 2️⃣ Setup Firebase (in [Firebase Console](https://console.firebase.google.com/))
 - Create project: `ProperDisciplineApp`
-- Add iOS app (bundle: `com.properDiscipline.app`)
+- Add iOS app (bundle: `com.properProductivePigeons.app`)
 - Enable Auth (Email/Password)
 - Create Firestore DB (production mode)
 - Download `GoogleService-Info.plist`

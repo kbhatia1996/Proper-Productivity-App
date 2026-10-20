@@ -12,7 +12,7 @@ struct AuthenticationView: View {
             VStack(spacing: 32) {
                 // Header
                 VStack(spacing: 8) {
-                    Text("PROPER DISCIPLINE")
+                    Text("PROPER PRODUCTIVE PIGEONS")
                         .font(.system(size: 32, weight: .bold))
                         .foregroundColor(SoloLevellingTheme.brightGold)
                     Text("Couples' Leveling System")
@@ -35,24 +35,40 @@ struct AuthenticationView: View {
                     if viewModel.isSignUp {
                         TextField("Name", text: $viewModel.name)
                             .textFieldStyle(.roundedBorder)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Text("Choose Avatar")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(SoloLevellingTheme.silverWhite)
                         
-                        HStack(spacing: 12) {
-                            ForEach(viewModel.avatarOptions, id: \.self) { avatar in
-                                VStack {
-                                    Image(systemName: "person.circle.fill")
-                                        .font(.system(size: 40))
-                                        .foregroundColor(viewModel.selectedAvatar == avatar ? SoloLevellingTheme.brightGold : SoloLevellingTheme.rankE)
-                                    Text(avatar)
-                                        .font(.system(size: 10))
-                                        .foregroundColor(SoloLevellingTheme.silverWhite)
-                                }
-                                .onTapGesture {
-                                    viewModel.selectedAvatar = avatar
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(viewModel.avatarOptions, id: \.self) { avatar in
+                                    Button {
+                                        viewModel.selectedAvatar = avatar
+                                    } label: {
+                                        Text(avatar)
+                                            .font(.system(size: 30))
+                                            .frame(width: 48, height: 48)
+                                            .background(
+                                                viewModel.selectedAvatar == avatar
+                                                    ? SoloLevellingTheme.brightGold.opacity(0.22)
+                                                    : SoloLevellingTheme.silverWhite.opacity(0.08)
+                                            )
+                                            .clipShape(Circle())
+                                            .overlay {
+                                                Circle()
+                                                    .stroke(
+                                                        viewModel.selectedAvatar == avatar
+                                                            ? SoloLevellingTheme.brightGold
+                                                            : .clear,
+                                                        lineWidth: 2
+                                                    )
+                                            }
+                                    }
+                                    .buttonStyle(.plain)
+                                    .accessibilityLabel("Choose \(avatar) avatar")
+                                    .accessibilityAddTraits(viewModel.selectedAvatar == avatar ? .isSelected : [])
                                 }
                             }
                         }
@@ -61,11 +77,15 @@ struct AuthenticationView: View {
                     TextField("Email", text: $viewModel.email)
                         .textFieldStyle(.roundedBorder)
                         .keyboardType(.emailAddress)
-                        .foregroundColor(.black)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .textContentType(.emailAddress)
+                        .foregroundColor(.primary)
                     
                     SecureField("Password", text: $viewModel.password)
                         .textFieldStyle(.roundedBorder)
-                        .foregroundColor(.black)
+                        .textContentType(viewModel.isSignUp ? .newPassword : .password)
+                        .foregroundColor(.primary)
                 }
                 .padding(.horizontal)
                 
@@ -82,7 +102,7 @@ struct AuthenticationView: View {
                 
                 // Submit Button
                 Button(action: {
-                    Task {
+                    _Concurrency.Task {
                         if viewModel.isSignUp {
                             await viewModel.signUp()
                         } else {

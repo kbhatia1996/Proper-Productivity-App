@@ -38,7 +38,7 @@ struct NestSetupView: View {
                         VStack(spacing: 8) {
                             Image(systemName: "link")
                                 .font(.system(size: 32))
-                                .foregroundColor(SoloLevellingTheme.rankC)
+                                .foregroundColor(SoloLevellingTheme.progressAccent)
                             Text("Join Nest")
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(SoloLevellingTheme.silverWhite)
@@ -88,7 +88,7 @@ struct CreateNestSheet: View {
                 
                 TextField("Nest Name", text: $viewModel.nestName)
                     .textFieldStyle(.roundedBorder)
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 
                 Picker("Theme", selection: $viewModel.nestTheme) {
                     Text("Dark Purple").tag("dark_purple")
@@ -105,9 +105,8 @@ struct CreateNestSheet: View {
                 }
                 
                 Button(action: {
-                    Task {
-                        await viewModel.createNest()
-                        dismiss()
+                    _Concurrency.Task {
+                        if await viewModel.createNest() { dismiss() }
                     }
                 }) {
                     if viewModel.isLoading {
@@ -146,8 +145,9 @@ struct JoinNestSheet: View {
                 
                 TextField("Invite Code", text: $viewModel.inviteCode)
                     .textFieldStyle(.roundedBorder)
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                     .textInputAutocapitalization(.characters)
+                    .autocorrectionDisabled()
                 
                 if !viewModel.errorMessage.isEmpty {
                     Text(viewModel.errorMessage)
@@ -156,9 +156,8 @@ struct JoinNestSheet: View {
                 }
                 
                 Button(action: {
-                    Task {
-                        await viewModel.joinNest()
-                        dismiss()
+                    _Concurrency.Task {
+                        if await viewModel.joinNest() { dismiss() }
                     }
                 }) {
                     if viewModel.isLoading {

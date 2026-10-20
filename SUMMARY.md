@@ -1,4 +1,4 @@
-# 🎮 Proper Discipline App – Complete Summary
+# 🎮 Proper Productive Pigeons App – Complete Summary
 
 ## ✨ What's Been Created
 
@@ -152,7 +152,7 @@ achievements/{id}
 ### 2. Setup Firebase (5 mins)
 - Go to [Firebase Console](https://console.firebase.google.com/)
 - Create project: "ProperDisciplineApp"
-- Add iOS app (bundle ID: `com.properDiscipline.app`)
+- Add iOS app (bundle ID: `com.properProductivePigeons.app`)
 - Download `GoogleService-Info.plist`
 - Drop into Xcode project
 

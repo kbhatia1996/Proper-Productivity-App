@@ -28,6 +28,18 @@ struct TaskCompletion: Identifiable, Codable {
         self.createdAt = Date()
         self.updatedAt = Date()
     }
+    
+    // Tolerates documents without an id field: the id is always taskId_pigeonId_date
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        taskId = try c.decode(String.self, forKey: .taskId)
+        pigeonId = try c.decode(String.self, forKey: .pigeonId)
+        date = try c.decode(String.self, forKey: .date)
+        isComplete = try c.decodeIfPresent(Bool.self, forKey: .isComplete) ?? false
+        id = try c.decodeIfPresent(String.self, forKey: .id) ?? "\(taskId)_\(pigeonId)_\(date)"
+        createdAt = try c.decodeIfPresent(Date.self, forKey: .createdAt) ?? Date()
+        updatedAt = try c.decodeIfPresent(Date.self, forKey: .updatedAt) ?? createdAt
+    }
 }
 
 struct Streak: Identifiable, Codable {

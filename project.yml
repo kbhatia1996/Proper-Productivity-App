@@ -1,0 +1,37 @@
+# XcodeGen spec - generates ProperDisciplineApp.xcodeproj (the .xcodeproj itself is gitignored).
+# `xcodegen generate` works without opening Xcode; it is run for you by .github/workflows/build-ios.yml.
+name: ProperDisciplineApp
+options:
+  bundleIdPrefix: com.karan
+  deploymentTarget:
+    iOS: "16.0"
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 11.0.0
+targets:
+  ProperDisciplineApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: ProperDisciplineApp
+    dependencies:
+      - package: Firebase
+        product: FirebaseCore
+      - package: Firebase
+        product: FirebaseAuth
+      - package: Firebase
+        product: FirebaseFirestore
+    settings:
+      base:
+        # Must be unique to you (change "karan" if you like); use the same id when registering the iOS app in Firebase
+        PRODUCT_BUNDLE_IDENTIFIER: com.karan.properproductivepigeons
+        SWIFT_VERSION: "5.0"
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Proper Productive Pigeons
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        TARGETED_DEVICE_FAMILY: "1"

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proper Discipline App - Demo</title>
+    <title>Proper Productive Pigeons App</title>
     <style>
         * {
             margin: 0;
@@ -11,10 +11,12 @@
             box-sizing: border-box;
         }
 
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0d0d14;
-            color: #eaeaf2;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
             overflow: hidden;
         }
 
@@ -22,13 +24,14 @@
             width: 390px;
             height: 844px;
             margin: 20px auto;
-            background: #000;
-            border-radius: 40px;
+            background: #fff;
+            border-radius: 50px;
             padding: 12px;
-            box-shadow: 0 20px 60px rgba(242, 198, 52, 0.2);
-            border: 8px solid #1a1a1f;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 8px solid #1a1a1a;
             overflow: hidden;
-            position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .notch {
@@ -37,369 +40,637 @@
             left: 50%;
             transform: translateX(-50%);
             width: 150px;
-            height: 25px;
-            background: #000;
-            border-radius: 0 0 20px 20px;
+            height: 28px;
+            background: #fff;
+            border-radius: 0 0 25px 25px;
             z-index: 100;
         }
 
-        .screen {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #26142e 0%, #1a0f23 100%);
-            border-radius: 30px;
+        .phone-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-radius: 40px;
+            background: #fff;
+            position: relative;
+        }
+
+        .header {
+            padding: 16px 20px;
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #e5e5e5;
+        }
+
+        .screen-container {
+            flex: 1;
             overflow-y: auto;
-            padding: 40px 20px 20px;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+        }
+
+        .screen {
             display: none;
+            padding: 20px;
+            height: 100%;
         }
 
         .screen.active {
+            display: block;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background: #fff;
+            border-top: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            height: 100%;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #999;
+            text-decoration: none;
+            font-size: 12px;
+            transition: color 0.2s;
+            border: none;
+            background: none;
         }
 
-        .screen::-webkit-scrollbar {
-            width: 4px;
+        .nav-item.active {
+            color: #7c3aed;
         }
 
-        .screen::-webkit-scrollbar-track {
-            background: rgba(242, 198, 52, 0.1);
+        .nav-item:hover {
+            color: #7c3aed;
         }
 
-        .screen::-webkit-scrollbar-thumb {
-            background: #f2c634;
-            border-radius: 2px;
-        }
-
-        /* Auth Screen */
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            font-size: 28px;
-            font-weight: bold;
-            color: #f2c634;
+        .nav-icon {
+            font-size: 20px;
             margin-bottom: 4px;
         }
 
-        .logo p {
-            font-size: 12px;
-            color: rgba(234, 234, 242, 0.7);
+        /* Auth Screen */
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .avatar-select {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .avatar-option {
+            width: 56px;
+            height: 56px;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .avatar-option:hover {
+            border-color: #7c3aed;
+            background: #f3f0ff;
+        }
+
+        .avatar-option.selected {
+            border-color: #7c3aed;
+            background: #ede9fe;
         }
 
         .tab-group {
             display: flex;
-            margin-bottom: 20px;
             gap: 0;
-            background: rgba(242, 198, 52, 0.1);
+            background: #f0f0f0;
             border-radius: 8px;
-            padding: 2px;
+            padding: 3px;
+            margin-bottom: 20px;
         }
 
-        .tab {
-            flex: 1;
-            padding: 8px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 14px;
-            border: none;
-            background: transparent;
-            color: #eaeaf2;
-            border-radius: 6px;
-            transition: all 0.3s;
-        }
-
-        .tab.active {
-            background: #f2c634;
-            color: #0d0d14;
-            font-weight: 600;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            margin-bottom: 6px;
-            color: rgba(234, 234, 242, 0.8);
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(242, 198, 52, 0.3);
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            color: #eaeaf2;
-            font-size: 14px;
-        }
-
-        .form-group input::placeholder {
-            color: rgba(234, 234, 242, 0.4);
-        }
-
-        .avatar-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .avatar-btn {
+        .tab-btn {
             flex: 1;
             padding: 10px;
-            background: rgba(242, 198, 52, 0.1);
-            border: 2px solid transparent;
-            border-radius: 8px;
-            color: #eaeaf2;
+            border: none;
+            background: transparent;
+            color: #666;
             cursor: pointer;
-            font-size: 28px;
-            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 13px;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
 
-        .avatar-btn.selected {
-            border-color: #f2c634;
-            background: rgba(242, 198, 52, 0.2);
+        .tab-btn.active {
+            background: #fff;
+            color: #7c3aed;
         }
 
         .btn {
-            padding: 14px 24px;
+            width: 100%;
+            padding: 12px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
             font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s;
-            margin: 8px 0;
+            transition: all 0.2s;
+            margin-top: 12px;
         }
 
         .btn-primary {
-            background: #f2c634;
-            color: #0d0d14;
-            width: 100%;
+            background: #7c3aed;
+            color: #fff;
         }
 
         .btn-primary:hover {
-            background: #e6b600;
-            box-shadow: 0 8px 20px rgba(242, 198, 52, 0.3);
+            background: #6d28d9;
+        }
+
+        .btn-primary:active {
+            background: #5b21b6;
         }
 
         .btn-secondary {
-            background: transparent;
-            color: #eaeaf2;
-            border: 2px solid rgba(242, 198, 52, 0.5);
-            width: 100%;
+            background: #f0f0f0;
+            color: #1a1a1a;
         }
 
         .btn-secondary:hover {
-            border-color: #f2c634;
-            background: rgba(242, 198, 52, 0.1);
+            background: #e5e5e5;
         }
 
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 13px;
-            margin: 4px 0;
-        }
-
-        /* Cards */
+        /* Card Styles */
         .card {
-            background: rgba(26, 15, 35, 0.8);
-            border: 1px solid rgba(242, 198, 52, 0.2);
+            background: #f8f9fa;
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 12px;
+            border: 1px solid #e5e5e5;
+            transition: all 0.2s;
         }
 
-        .card h3 {
-            color: #f2c634;
-            font-size: 16px;
+        .card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
             margin-bottom: 4px;
         }
 
-        .card p {
+        .card-subtitle {
             font-size: 12px;
-            color: rgba(234, 234, 242, 0.7);
+            color: #999;
             margin-bottom: 8px;
         }
 
-        /* Nest Setup */
-        .option-card {
-            background: rgba(26, 15, 35, 0.8);
-            border: 2px solid rgba(242, 198, 52, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 16px;
+        .card-action {
+            font-size: 13px;
+            color: #7c3aed;
+            font-weight: 500;
         }
 
-        .option-card:hover {
-            border-color: #f2c634;
-            background: rgba(242, 198, 52, 0.1);
-        }
-
-        .option-card .icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-
-        .option-card h3 {
-            color: #eaeaf2;
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .option-card p {
-            font-size: 12px;
-            color: rgba(234, 234, 242, 0.6);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: flex-end;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #26142e;
-            width: 100%;
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #f2c634;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        /* Dashboard */
-        .stat-card {
-            background: rgba(26, 15, 35, 0.8);
-            border: 1px solid rgba(242, 198, 52, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stat-card .avatar {
-            font-size: 32px;
-            margin-right: 12px;
-        }
-
-        .stat-card .info h3 {
-            color: #f2c634;
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .stat-card .info p {
-            font-size: 11px;
-            color: rgba(234, 234, 242, 0.6);
-        }
-
-        .task-card {
-            background: rgba(26, 15, 35, 0.8);
-            border: 1px solid rgba(242, 198, 52, 0.2);
+        /* Task/Quest Card */
+        .quest-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
             border-radius: 12px;
             padding: 14px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 12px;
+            align-items: flex-start;
         }
 
-        .task-card .left {
+        .quest-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .quest-content {
             flex: 1;
         }
 
-        .task-card h4 {
-            color: #f2c634;
+        .quest-title {
             font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 3px;
+        }
+
+        .quest-desc {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .progress-small {
+            width: 100%;
+            height: 4px;
+            background: #e5e5e5;
+            border-radius: 2px;
+            overflow: hidden;
             margin-bottom: 4px;
         }
 
-        .task-card p {
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa);
+            width: 25%;
+            transition: width 0.3s;
+        }
+
+        .quest-meta {
             font-size: 11px;
-            color: rgba(234, 234, 242, 0.6);
-            margin-bottom: 4px;
-        }
-
-        .checkpoint-info {
-            font-size: 10px;
-            color: #f2c634;
-            margin-top: 4px;
+            color: #999;
         }
 
         .checkbox {
             width: 40px;
             height: 40px;
-            border: 2px solid #7a7a7a;
-            border-radius: 50%;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 20px;
+            flex-shrink: 0;
+            transition: all 0.2s;
         }
 
         .checkbox:hover {
-            border-color: #f2c634;
+            border-color: #7c3aed;
+            background: #f3f0ff;
         }
 
         .checkbox.checked {
-            border-color: #33cc33;
-            background: rgba(51, 204, 51, 0.2);
+            background: #7c3aed;
+            border-color: #7c3aed;
+            color: #fff;
         }
 
+        /* Section */
         .section-title {
-            color: #f2c634;
-            font-size: 12px;
-            font-weight: 600;
-            margin: 16px 0 10px 0;
+            font-size: 13px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #999;
+            letter-spacing: 0.5px;
+            margin: 20px 0 12px 0;
         }
 
-        .empty-state {
+        /* Profile */
+        .profile-header {
             text-align: center;
-            padding: 40px 20px;
+            padding: 20px 0;
         }
 
-        .empty-state .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.5;
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #7c3aed, #a78bfa);
+            border-radius: 20px;
+            font-size: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
         }
 
-        .empty-state p {
+        .profile-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-meta {
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid #e5e5e5;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #7c3aed;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
             font-size: 12px;
-            color: rgba(234, 234, 242, 0.5);
-            margin-bottom: 16px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        /* Shared Goals */
+        .goal-card {
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .goal-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .goal-status {
+            font-size: 11px;
+            background: #ede9fe;
+            color: #7c3aed;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .goal-progress {
+            margin-bottom: 8px;
+        }
+
+        .goal-partners {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .partner-badge {
+            font-size: 12px;
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: #666;
+        }
+
+        .partner-done {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .partner-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+
+        /* ---------- Activity calendar ---------- */
+        .phone-content.on-auth .bottom-nav { display: none; }
+        .seg { display: flex; background: #f0f0f0; border-radius: 9px; padding: 3px; margin-bottom: 10px; }
+        .seg-btn { flex: 1; padding: 8px 4px; border: none; background: transparent; color: #666; font-weight: 600; font-size: 12px; border-radius: 7px; cursor: pointer; transition: all .2s; }
+        .seg-btn.active { background: #fff; color: #7c3aed; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+        .seg-btn.active.shared { color: #ec4899; }
+        .nav-row { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 10px; }
+        .nav-row .label { font-size: 16px; font-weight: 700; text-align: center; flex: 1; }
+        .nav-row .label small { display: block; font-size: 11px; color: #999; font-weight: 500; }
+        .nav-arrow { width: 32px; height: 32px; border: none; border-radius: 50%; background: #f0f0f0; font-size: 16px; cursor: pointer; }
+        .nav-arrow:disabled { opacity: .3; cursor: not-allowed; }
+        .today-chip { border: none; background: #ede9fe; color: #7c3aed; font-size: 11px; font-weight: 600; border-radius: 10px; padding: 3px 9px; cursor: pointer; margin-left: 6px; }
+        .sum-card { display: flex; align-items: center; gap: 14px; background: #f8f9fa; border: 1px solid #e5e5e5; border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+        .sum-text { flex: 1; font-size: 12px; color: #666; line-height: 1.55; }
+        .sum-text b { color: #1a1a1a; }
+        .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px 0; justify-items: center; }
+        .cal-dow { font-size: 10px; font-weight: 600; color: #999; text-align: center; padding: 2px 0; }
+        .day { position: relative; border: none; background: transparent; padding: 0; cursor: pointer; line-height: 0; }
+        .day:hover svg { transform: scale(1.08); }
+        .day svg { transition: transform .15s; }
+        .day .badge { position: absolute; top: -3px; right: -4px; font-size: 11px; line-height: 1; }
+        .month-block { margin-bottom: 14px; }
+        .month-title { font-size: 12px; font-weight: 700; color: #666; margin: 6px 0; }
+        .year-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .year-tile { border: 1px solid #e5e5e5; background: #fff; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; font-family: inherit; }
+        .year-tile.disabled { opacity: .45; cursor: default; }
+        .year-tile .m { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+        .year-tile .p { font-size: 11px; color: #999; margin-top: 2px; }
+        .mini-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .mini-row .ic { font-size: 20px; width: 28px; text-align: center; }
+        .mini-row .body { flex: 1; min-width: 0; }
+        .mini-row .nm { font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; gap: 6px; }
+        .mini-row .nm span { font-weight: 500; color: #999; font-size: 11px; }
+        .tag { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #ede9fe; color: #7c3aed; }
+        .tag.shared { background: #fce7f3; color: #db2777; }
+        .tag.warn { background: #fef3c7; color: #d97706; }
+        .tag.ok { background: #dcfce7; color: #16a34a; }
+        .progress-bar.shared { background: linear-gradient(90deg, #ec4899, #f9a8d4); }
+        .progress-bar.done { background: linear-gradient(90deg, #16a34a, #4ade80); }
+        .empty { text-align: center; color: #999; font-size: 12px; padding: 16px 8px; border: 1px dashed #ddd; border-radius: 12px; }
+        .mini-btn { border: none; border-radius: 7px; padding: 5px 9px; font-size: 11px; font-weight: 600; cursor: pointer; background: #7c3aed; color: #fff; }
+        .mini-btn.ghost { background: #f0f0f0; color: #555; }
+        .mini-btn.gold { background: #f59e0b; }
+        .quest-card.rest { opacity: .55; }
+        .quest-card.unlocked { border-color: #f59e0b; background: #fffbeb; }
+        .checkbox.disabled { opacity: .35; cursor: not-allowed; }
+        .banner { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-size: 12px; }
+        .banner .t { flex: 1; }
+        .today-card { display: flex; align-items: center; gap: 14px; cursor: pointer; }
+        .legend { margin-top: 10px; font-size: 11px; color: #777; display: flex; gap: 14px; flex-wrap: wrap; }
+
+        /* overlays */
+        .overlay { position: absolute; inset: 0; z-index: 200; display: none; }
+        .overlay.open { display: block; }
+        .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+        .sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 82%; overflow-y: auto; background: #fff; border-radius: 22px 22px 0 0; padding: 16px 20px 24px; animation: slideUp .28s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
+        .sheet-grip { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 12px; }
+        .sheet h3 { font-size: 17px; margin-bottom: 2px; }
+        .sheet .sub { font-size: 12px; color: #999; margin-bottom: 12px; }
+        .celebrate { position: absolute; left: 20px; right: 20px; top: 50%; transform: translateY(-50%); background: #fff; border-radius: 24px; padding: 24px 20px 20px; text-align: center; overflow: hidden; animation: pop .4s cubic-bezier(.2,1.4,.4,1); }
+        @keyframes pop { from { transform: translateY(-50%) scale(.6); opacity: 0; } to { transform: translateY(-50%) scale(1); opacity: 1; } }
+        .trophy { font-size: 58px; animation: bounce 1s ease infinite; }
+        @keyframes bounce { 50% { transform: translateY(-8px) scale(1.08); } }
+        .celebrate h2 { font-size: 20px; margin: 6px 0 2px; }
+        .reward-box { background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 14px; padding: 12px; margin: 12px 0; font-weight: 700; font-size: 16px; color: #92400e; }
+        .note { font-size: 12px; color: #666; line-height: 1.5; background: #f8f9fa; border-radius: 10px; padding: 10px; text-align: left; margin-bottom: 4px; }
+        .confetti { position: absolute; top: -12px; width: 8px; height: 12px; opacity: .9; animation: fall 2.4s linear infinite; }
+        @keyframes fall { to { transform: translateY(520px) rotate(540deg); } }
+        .toast { position: absolute; left: 50%; bottom: 76px; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 9px 14px; border-radius: 18px; font-size: 12px; z-index: 300; max-width: 88%; text-align: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+        .toast.show { opacity: 1; }
+        .settings-group { margin: 14px 0; }
+        .settings-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+        .appearance-options { display: flex; gap: 8px; }
+        .appearance-option { flex: 1; border: 1px solid #e5e5e5; border-radius: 9px; padding: 9px; background: #f8f9fa; color: #555; cursor: pointer; font-weight: 600; }
+        .appearance-option.active { border-color: #7c3aed; color: #7c3aed; background: #ede9fe; }
+        .profile-emoji-picker { display: grid; grid-template-columns: repeat(8, 1fr); gap: 7px; }
+        .profile-emoji-option { width: 100%; aspect-ratio: 1; border: 1px solid #e5e5e5; border-radius: 10px; background: #f8f9fa; font-size: 21px; cursor: pointer; }
+        .profile-emoji-option.selected { border: 2px solid #7c3aed; background: #ede9fe; }
+        .reminder-toggle { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .reminder-toggle input { width: 20px; height: 20px; accent-color: #7c3aed; }
+        .demo-note { font-size: 11px; color: #999; line-height: 1.45; margin-top: 7px; }
+        .phone-content.dark-theme { background: #100e16; color: #eeeaf5; }
+        .phone-content.dark-theme .header, .phone-content.dark-theme .bottom-nav { background: #17141f; border-color: #302b3a; }
+        .phone-content.dark-theme .header-title, .phone-content.dark-theme .title, .phone-content.dark-theme .profile-name,
+        .phone-content.dark-theme .card-title, .phone-content.dark-theme .quest-title, .phone-content.dark-theme .goal-title,
+        .phone-content.dark-theme .mini-row .nm, .phone-content.dark-theme .nav-row .label,
+        .phone-content.dark-theme .sheet h3, .phone-content.dark-theme .celebrate h2 { color: #eeeaf5; }
+        .phone-content.dark-theme .screen { color: #eeeaf5; }
+        .phone-content.dark-theme .card, .phone-content.dark-theme .stat-card, .phone-content.dark-theme .sum-card,
+        .phone-content.dark-theme .quest-card, .phone-content.dark-theme .goal-card,
+        .phone-content.dark-theme .year-tile, .phone-content.dark-theme .sheet,
+        .phone-content.dark-theme .celebrate, .phone-content.dark-theme .note { background: #211d2b; border-color: #393243; color: #eeeaf5; }
+        .phone-content.dark-theme .profile-avatar { background: linear-gradient(135deg, #55318b, #8057b5); }
+        .phone-content.dark-theme .icon-btn, .phone-content.dark-theme .nav-arrow,
+        .phone-content.dark-theme .tab-group, .phone-content.dark-theme .seg,
+        .phone-content.dark-theme .btn-secondary, .phone-content.dark-theme .mini-btn.ghost,
+        .phone-content.dark-theme .partner-badge, .phone-content.dark-theme .appearance-option,
+        .phone-content.dark-theme .profile-emoji-option { background: #302a3a; border-color: #494153; color: #eeeaf5; }
+        .phone-content.dark-theme .tab-btn.active, .phone-content.dark-theme .seg-btn.active,
+        .phone-content.dark-theme .appearance-option.active, .phone-content.dark-theme .profile-emoji-option.selected { background: #493365; color: #e5caff; border-color: #a78bfa; }
+        .phone-content.dark-theme .quest-card.unlocked { background: #352b1a; }
+        .phone-content.dark-theme .banner { background: #352b1a; border-color: #80622c; color: #fff0c2; }
+        .phone-content.dark-theme .empty { border-color: #494153; color: #b7afc2; }
+        .phone-content.dark-theme .form-input { background: #211d2b; border-color: #494153; color: #eeeaf5; }
+        .phone-content.dark-theme .avatar-option { background: #302a3a; border-color: #494153; }
+        .phone-content.dark-theme .avatar-option.selected { background: #493365; border-color: #a78bfa; }
+        .phone-content.dark-theme .checkbox { background: #211d2b; border-color: #494153; }
+        .phone-content.dark-theme .checkbox.checked { background: #7c3aed; border-color: #7c3aed; }
+        .phone-content.dark-theme .progress-small { background: #393243; }
+        .phone-content.dark-theme .tag { background: #493365; color: #e5caff; }
+        .phone-content.dark-theme .tag.warn { background: #59451e; color: #fcd879; }
+        .phone-content.dark-theme .tag.ok { background: #173b2b; color: #86efac; }
+        .phone-content.dark-theme .reward-box { color: #552c00; }
+        .phone-content.dark-theme .settings-label { color: #eeeaf5; }
+        .phone-content.dark-theme .sum-text, .phone-content.dark-theme .sum-text b { color: #eeeaf5; }
+        .phone-content.dark-theme .sheet-grip { background: #554d60; }
+        .phone-content.dark-theme .btn-secondary:hover { background: #40394d; }
+        .phone-content.dark-theme .day svg text { fill: #eeeaf5 !important; }
+        .phone-content.dark-theme .day svg circle[fill="#7c3aed"] { fill: #7c3aed; }
+        @media (max-width: 430px) {
+            body { overflow: auto; }
+            .phone-frame { width: 100vw; height: 100dvh; margin: 0; border: 0; border-radius: 0; padding: 0; }
+            .phone-content { border-radius: 0; }
+            .notch { display: none; }
         }
     </style>
 </head>
@@ -407,257 +678,745 @@
     <div class="phone-frame">
         <div class="notch"></div>
 
-        <!-- Auth Screen -->
-        <div class="screen active" id="authScreen">
-            <div class="logo">
-                <h1>PROPER DISCIPLINE</h1>
-                <p>Couples' Leveling System</p>
+        <div class="phone-content">
+            <!-- Header -->
+            <div class="header" id="header">
+                <div class="header-title" id="headerTitle">Home</div>
+                <div class="header-right">
+                    <button class="icon-btn" id="appearanceButton" onclick="toggleAppearance()" aria-label="Switch appearance">☀️</button>
+                    <button class="icon-btn" onclick="toggleNotifications()" aria-label="Reward notifications">🔔</button>
+                </div>
             </div>
 
-            <div class="tab-group">
-                <button class="tab active" onclick="switchTab('signin')">Sign In</button>
-                <button class="tab" onclick="switchTab('signup')">Sign Up</button>
-            </div>
+            <!-- Screens -->
+            <div class="screen-container">
+                <!-- Auth Screen -->
+                <div class="screen active" id="authScreen">
+                    <div class="auth-container">
+                        <div class="logo">🐦</div>
+                        <div class="title">Proper Productive Pigeons</div>
+                        <div class="subtitle">Track goals together</div>
 
-            <div id="signin-form">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" placeholder="your@email.com" value="pigeon1@test.com">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="••••••••" value="password123">
-                </div>
-                <button class="btn btn-primary" onclick="goToNestSetup()">Sign In</button>
-            </div>
+                        <div class="tab-group">
+                            <button class="tab-btn active" onclick="switchAuthTab('signin')">Sign In</button>
+                            <button class="tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+                        </div>
 
-            <div id="signup-form" style="display: none;">
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" placeholder="Your name" value="Pigeon1">
-                </div>
-                <div class="form-group">
-                    <label>Choose Avatar</label>
-                    <div class="avatar-group">
-                        <button class="avatar-btn selected" onclick="selectAvatar(this)">🐦</button>
-                        <button class="avatar-btn" onclick="selectAvatar(this)">🕊️</button>
-                        <button class="avatar-btn" onclick="selectAvatar(this)">🦅</button>
-                        <button class="avatar-btn" onclick="selectAvatar(this)">🦜</button>
+                        <div id="signinForm">
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" placeholder="you@example.com" value="user@test.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-input" placeholder="••••••••" value="password">
+                            </div>
+                            <button class="btn btn-primary" onclick="goToHome()">Sign In</button>
+                        </div>
+
+                        <div id="signupForm" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-input" placeholder="Your name" value="Alex">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Choose your pigeon</label>
+                                <div class="avatar-select">
+                                    <div class="avatar-option selected" onclick="selectAvatar(this, '🐦')">🐦</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🕊️')">🕊️</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐤')">🐤</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦜')">🦜</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦉')">🦉</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦅')">🦅</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦆')">🦆</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦢')">🦢</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐧')">🐧</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐥')">🐥</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦩')">🦩</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦚')">🦚</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦃')">🦃</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐓')">🐓</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐣')">🐣</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦤')">🦤</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦇')">🦇</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐺')">🐺</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦊')">🦊</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐱')">🐱</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐼')">🐼</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐨')">🐨</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🦋')">🦋</div>
+                                    <div class="avatar-option" onclick="selectAvatar(this, '🐸')">🐸</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" placeholder="you@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-input" placeholder="••••••••">
+                            </div>
+                            <button class="btn btn-primary" onclick="goToHome()">Create Account</button>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" placeholder="your@email.com">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="••••••••">
-                </div>
-                <button class="btn btn-primary" onclick="goToNestSetup()">Create Account</button>
-            </div>
-        </div>
 
-        <!-- Nest Setup Screen -->
-        <div class="screen" id="nestSetupScreen">
-            <h2 style="text-align: center; color: #f2c634; margin-bottom: 20px; font-size: 18px;">CREATE OR JOIN A NEST</h2>
+                <!-- Home Screen -->
+                <div class="screen" id="homeScreen"></div>
 
-            <div class="option-card" onclick="showCreateNestModal()">
-                <div class="icon">🏠</div>
-                <h3>Create Nest</h3>
-                <p>Start fresh with your partner</p>
+                <!-- Activity (Calendar) Screen -->
+                <div class="screen" id="calendarScreen"></div>
+
+                <!-- Shared Goals Screen -->
+                <div class="screen" id="sharedScreen"></div>
+
+                <!-- Profile Screen -->
+                <div class="screen" id="profileScreen"></div>
             </div>
 
-            <div class="option-card" onclick="showJoinNestModal()">
-                <div class="icon">🔗</div>
-                <h3>Join Nest</h3>
-                <p>Use invite code from partner</p>
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <button class="nav-item active" data-screen="home" onclick="showScreen('home')">
+                    <div class="nav-icon">🏠</div>
+                    <div>Home</div>
+                </button>
+                <button class="nav-item" data-screen="calendar" onclick="showScreen('calendar')">
+                    <div class="nav-icon">📅</div>
+                    <div>Activity</div>
+                </button>
+                <button class="nav-item" data-screen="shared" onclick="showScreen('shared')">
+                    <div class="nav-icon">💑</div>
+                    <div>Together</div>
+                </button>
+                <button class="nav-item" data-screen="profile" onclick="showScreen('profile')">
+                    <div class="nav-icon">👤</div>
+                    <div>Profile</div>
+                </button>
             </div>
 
-            <div style="flex: 1;"></div>
-
-            <button class="btn btn-secondary btn-small" onclick="goToAuth()">Sign Out</button>
-        </div>
-
-        <!-- Dashboard Screen -->
-        <div class="screen" id="dashboardScreen">
-            <div class="stat-card">
-                <div style="display: flex; align-items: center;">
-                    <div class="avatar">🐦</div>
-                    <div class="info">
-                        <h3>Pigeon1</h3>
-                        <p>Rank: D | XP: 250</p>
-                    </div>
-                </div>
+            <!-- Day detail sheet -->
+            <div class="overlay" id="daySheet">
+                <div class="backdrop" onclick="closeDay()"></div>
+                <div class="sheet" id="daySheetBody"></div>
             </div>
 
-            <div class="card">
-                <h3>🏠 Karan & Sam's Nest</h3>
-                <p>Invite Code: <strong>ABC123</strong></p>
+            <!-- Deserving celebration -->
+            <div class="overlay" id="celebrateOverlay">
+                <div class="backdrop"></div>
+                <div class="celebrate" id="celebrateBody"></div>
             </div>
 
-            <div class="section-title">📋 Personal Tasks</div>
-
-            <div class="task-card">
-                <div class="left">
-                    <h4>📚 Morning Reading</h4>
-                    <p>Read for 30 minutes</p>
-                    <div class="checkpoint-info">Next: 4-hour gaming (0/4 days)</div>
-                </div>
-                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
-            </div>
-
-            <div class="task-card">
-                <div class="left">
-                    <h4>🏃 Daily Exercise</h4>
-                    <p>30 mins workout</p>
-                    <div class="checkpoint-info">Next: Movie night (0/8 days)</div>
-                </div>
-                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
-            </div>
-
-            <div class="task-card">
-                <div class="left">
-                    <h4>📿 Meditation</h4>
-                    <p>10 mins mindfulness</p>
-                    <div class="checkpoint-info">Next: Date night (0/16 days)</div>
-                </div>
-                <div class="checkbox" onclick="toggleCheckbox(this)"></div>
-            </div>
-
-            <button class="btn btn-primary btn-small" onclick="showCreateTaskModal()" style="margin-top: 16px;">➕ NEW TASK</button>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <div class="modal" id="createNestModal">
-        <div class="modal-content">
-            <div class="modal-header">Create Your Nest</div>
-            <div class="form-group">
-                <label>Nest Name</label>
-                <input type="text" placeholder="e.g., Karan & Sam's Nest" value="Karan & Sam's Nest">
-            </div>
-            <div class="form-group">
-                <label>Theme</label>
-                <select>
-                    <option>Dark Purple</option>
-                    <option>Gold & Black</option>
-                    <option>Silver & Black</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" onclick="goToDashboard()">Create Nest</button>
-            <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
-        </div>
-    </div>
-
-    <div class="modal" id="joinNestModal">
-        <div class="modal-content">
-            <div class="modal-header">Join a Nest</div>
-            <div class="form-group">
-                <label>Invite Code</label>
-                <input type="text" placeholder="e.g., ABC123" value="ABC123">
-            </div>
-            <p style="font-size: 11px; color: rgba(234, 234, 242, 0.6); margin-bottom: 16px;">6 characters, ask your partner for the code</p>
-            <button class="btn btn-primary" onclick="goToDashboard()">Join Nest</button>
-            <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
-        </div>
-    </div>
-
-    <div class="modal" id="createTaskModal">
-        <div class="modal-content">
-            <div class="modal-header">Create New Task</div>
-            <div class="form-group">
-                <label>Task Name</label>
-                <input type="text" placeholder="e.g., Morning Reading">
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <input type="text" placeholder="What do you need to do?">
-            </div>
-            <div class="form-group">
-                <label>Type</label>
-                <select>
-                    <option>Personal</option>
-                    <option>Shared</option>
-                </select>
-            </div>
-            <div style="background: rgba(26, 15, 35, 0.5); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-                <p style="font-size: 12px; color: #f2c634; margin-bottom: 8px;">Checkpoints & Deservings</p>
-                <div class="form-group">
-                    <label>Days</label>
-                    <input type="number" value="4">
-                </div>
-                <div class="form-group">
-                    <label>Deserving</label>
-                    <input type="text" placeholder="e.g., 4-hour gaming">
-                </div>
-            </div>
-            <button class="btn btn-primary" onclick="closeModals()">Create Task</button>
-            <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+            <div class="toast" id="toast"></div>
         </div>
     </div>
 
     <script>
-        function switchTab(tab) {
-            const signinForm = document.getElementById('signin-form');
-            const signupForm = document.getElementById('signup-form');
-            const tabs = document.querySelectorAll('.tab');
+    /* =====================================================================
+       Proper Productive Pigeons – demo data layer
+       - Every check-in is stored per day (S.comp) and NEVER deleted.
+       - Each task has its own "deserving cycle" (target, window, reward).
+         Claiming a reward resets the cycle view to 0/target, but the daily
+         history stays, so week / month / quarter / year views keep working.
+       ===================================================================== */
+    const PURPLE = '#7c3aed', PINK = '#ec4899';
+    const ALL = [0,1,2,3,4,5,6];
+    const TASKS = [
+        { id:'read',     name:'Morning Reading', desc:'Read for 30 minutes',        icon:'📚', type:'personal', days:ALL,           target:4,  window:7,  reward:'4-hour gaming' },
+        { id:'exercise', name:'Daily Exercise',  desc:'30-min workout (Mon–Sat)',   icon:'🏃', type:'personal', days:[1,2,3,4,5,6], target:8,  window:14, reward:'Movie night' },
+        { id:'meditate', name:'Meditation',      desc:'10-min mindfulness',         icon:'📿', type:'personal', days:ALL,           target:16, window:30, reward:'Date night' },
+        { id:'walk',     name:'Evening Walk',    desc:'Walk together after dinner', icon:'🚶', type:'shared',   days:ALL,           target:10, window:21, reward:'Ice-cream date' },
+        { id:'cook',     name:'Weekend Cooking', desc:'Prepare dinner together',    icon:'🍳', type:'shared',   days:[0,6],         target:4,  window:42, reward:'Dessert out' },
+        { id:'movie',    name:'Movie Night',     desc:'Watch a film together',      icon:'🎬', type:'shared',   days:[5],           target:4,  window:42, reward:'Cinema tickets' },
+    ];
+    const taskById = id => TASKS.find(t => t.id === id);
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const DOWS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const STORE_KEY = 'pd_demo_state_v2';
+    const PREFS_KEY = 'pd_demo_preferences_v1';
+    const PROFILE_EMOJIS = ['🐦','🕊️','🐤','🦜','🦉','🦅','🦆','🦢','🐧','🐥','🦩','🦚','🦃','🐓','🐣','🦤','🦇','🐺','🦊','🐱','🐼','🐨','🦋','🐸'];
+    let prefs = { theme:'light', avatar:'🐦', reminders:false };
+    let signupAvatar = '🐦';
 
-            if (tab === 'signin') {
-                signinForm.style.display = 'block';
-                signupForm.style.display = 'none';
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-            } else {
-                signinForm.style.display = 'none';
-                signupForm.style.display = 'block';
-                tabs[0].classList.remove('active');
-                tabs[1].classList.add('active');
+    /* ---------- date helpers (all dates are local 'YYYY-MM-DD' strings) ---------- */
+    const pad = n => String(n).padStart(2, '0');
+    const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+    const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return fmt(d); };
+    const diffDays = (a, b) => { const A = parse(a), B = parse(b); return Math.round((Date.UTC(B.getFullYear(),B.getMonth(),B.getDate()) - Date.UTC(A.getFullYear(),A.getMonth(),A.getDate())) / 864e5); };
+    const todayKey = () => fmt(new Date());
+    const shortDate = s => { const d = parse(s); return `${MONTHS[d.getMonth()].slice(0,3)} ${d.getDate()}`; };
+
+    let S;                       // persisted state
+    let storageWarned = false;
+
+    function savePrefs() {
+        try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); }
+        catch (e) { toast('Settings could not be saved in this browser'); }
+    }
+    function loadPrefs() {
+        try {
+            const raw = localStorage.getItem(PREFS_KEY);
+            if (!raw) return;
+            const saved = JSON.parse(raw);
+            if (saved && ['light','dark'].includes(saved.theme) && PROFILE_EMOJIS.includes(saved.avatar)) {
+                prefs = { ...prefs, ...saved };
+                prefs.reminders = !!saved.reminders;
             }
-        }
+        } catch (e) { /* invalid preferences → use defaults */ }
+    }
+    function applyTheme() {
+        const dark = prefs.theme === 'dark';
+        document.querySelector('.phone-content').classList.toggle('dark-theme', dark);
+        document.getElementById('appearanceButton').textContent = dark ? '🌙' : '☀️';
+        document.getElementById('appearanceButton').setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} appearance`);
+        document.querySelector('.notch').style.background = dark ? '#17141f' : '#fff';
+    }
+    function setTheme(theme) {
+        prefs.theme = theme;
+        savePrefs();
+        applyTheme();
+        renderProfile();
+        toast(`${theme === 'dark' ? 'Dark' : 'Light'} appearance`);
+    }
+    function toggleAppearance() { setTheme(prefs.theme === 'dark' ? 'light' : 'dark'); }
 
-        function selectAvatar(btn) {
-            document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-        }
+    /* ---------- persistence (edge case: storage blocked → keep working in memory) ---------- */
+    function save() {
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); }
+        catch (e) { if (!storageWarned) { storageWarned = true; toast('Storage unavailable – progress won’t persist after reload'); } }
+    }
+    function load() {
+        try {
+            const raw = localStorage.getItem(STORE_KEY);
+            if (!raw) return null;
+            const s = JSON.parse(raw);
+            if (s && s.v === 2 && s.comp && s.cyc && Array.isArray(s.claims) && s.start && s.processed) return s;
+        } catch (e) { /* corrupt → reseed */ }
+        return null;
+    }
 
-        function goToAuth() {
-            showScreen('authScreen');
+    /* ---------- completion + cycle logic ---------- */
+    function entryOf(date, id) { return (S.comp[date] && S.comp[date][id]) || null; }
+    function credit(t, date) {                       // 0..1 contribution to the daily ring
+        const e = entryOf(date, t.id); if (!e) return 0;
+        return t.type === 'personal' ? (e.me ? 1 : 0) : ((e.me ? 1 : 0) + (e.partner ? 1 : 0)) / 2;
+    }
+    const isDone = (t, date) => credit(t, date) === 1;     // shared needs BOTH partners
+    function cycleCount(t, upto) {
+        const c = S.cyc[t.id]; let n = 0;
+        for (let d = c.start; d <= upto; d = addDays(d, 1)) if (isDone(t, d)) n++;
+        return n;
+    }
+    function claimCycle(t, claimDate, by) {
+        const c = S.cyc[t.id];
+        S.claims.push({ task:t.id, earned:c.unlocked, claimed:claimDate, reward:t.reward, cycleStart:c.start, count:cycleCount(t, c.unlocked), by });
+        c.start = addDays(c.unlocked, 1);                  // later check-ins count toward the NEXT cycle
+        c.unlocked = null;
+    }
+    // closing=true is used for past days (window expiry); today never expires.
+    function processDay(t, date, closing, autoClaim) {
+        const c = S.cyc[t.id];
+        if (date < c.start || c.unlocked) return null;
+        const n = cycleCount(t, date);
+        if (n >= t.target) { c.unlocked = date; if (autoClaim) claimCycle(t, date, 'auto'); return 'unlocked'; }
+        if (closing && date >= addDays(c.start, t.window - 1)) {
+            S.missed.push({ task:t.id, start:c.start, end:date, count:n });
+            c.start = addDays(date, 1);
+            return 'expired';
         }
+        return null;
+    }
+    function catchUp() {                                   // app reopened on a later day → close the gap days
+        const yesterday = addDays(todayKey(), -1);
+        for (let d = addDays(S.processed, 1); d <= yesterday; d = addDays(d, 1))
+            TASKS.forEach(t => processDay(t, d, true, false));
+        if (S.processed < yesterday) S.processed = yesterday;
+    }
 
-        function goToNestSetup() {
-            showScreen('nestSetupScreen');
+    /* ---------- seed data (deterministic) ---------- */
+    function seed() {
+        let a = 20261020;
+        const rng = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+        const today = todayKey();
+        S = { v:2, start: addDays(today, -340), comp:{}, cyc:{}, claims:[], missed:[], processed: addDays(today, -1) };
+        TASKS.forEach(t => S.cyc[t.id] = { start: S.start, unlocked: null });
+        const base = { read:.82, exercise:.72, meditate:.62, walk:.78, cook:.7, movie:.65 };
+        // Demo set-up: Reading is 3/4 and Evening Walk is 9/10 with Sam already done today,
+        // so checking them in today triggers a deserving.
+        const force = { read: addDays(today, -3), walk: addDays(today, -9) };
+        for (let d = S.start; d < today; d = addDays(d, 1)) {
+            const dow = parse(d).getDay(), mood = rng();
+            TASKS.forEach(t => {
+                if (force[t.id] === d) S.cyc[t.id] = { start: d, unlocked: null };
+                if (!t.days.includes(dow)) return;
+                const forced = force[t.id] && d >= force[t.id];
+                const p = Math.min(.97, Math.max(.15, base[t.id] + (mood - .5) * .45));
+                const me = forced || rng() < p;
+                const partner = t.type === 'shared' ? (forced || rng() < Math.min(.95, p + .05)) : false;
+                if (me || partner) (S.comp[d] = S.comp[d] || {})[t.id] = { me, partner };
+                processDay(t, d, true, !forced);
+            });
         }
+        const dowToday = parse(today).getDay();
+        S.comp[today] = { walk: { me:false, partner:true } };
+        if (taskById('exercise').days.includes(dowToday)) { S.comp[today].exercise = { me:true, partner:false }; processDay(taskById('exercise'), today, false, false); }
+    }
 
-        function goToDashboard() {
-            showScreen('dashboardScreen');
-            closeModals();
+    /* ---------- aggregation (everything below is filter-aware) ---------- */
+    function dayInfo(date) {
+        const today = todayKey();
+        if (date < S.start) return { state:'nodata', items:[], personal:{done:0,total:0}, shared:{done:0,total:0} };
+        const dow = parse(date).getDay();
+        const info = { state: date > today ? 'future' : 'ok', items:[], personal:{done:0,total:0}, shared:{done:0,total:0} };
+        TASKS.forEach(t => {
+            if (!t.days.includes(dow)) return;
+            const cr = date > today ? 0 : credit(t, date);
+            info[t.type].total++; info[t.type].done += cr;
+            info.items.push({ t, cr, entry: entryOf(date, t.id) });
+        });
+        return info;
+    }
+    function agg(info, f) {                                // the circle calculation, driven by the filter
+        const incP = f !== 'shared', incS = f !== 'personal';
+        const p = info.personal, s = info.shared;
+        const done = (incP ? p.done : 0) + (incS ? s.done : 0), total = (incP ? p.total : 0) + (incS ? s.total : 0);
+        return {
+            pPct: incP && p.total ? p.done / p.total : null,
+            sPct: incS && s.total ? s.done / s.total : null,
+            cPct: total ? done / total : null,             // guard: no scheduled tasks → null, never NaN
+            done, total
+        };
+    }
+    function earnedOn(date, f) {
+        const list = [];
+        S.claims.forEach(c => { if (c.earned === date) list.push({ t: taskById(c.task), claimed: true, c }); });
+        TASKS.forEach(t => { const cy = S.cyc[t.id]; if (cy.unlocked === date) list.push({ t, claimed: false }); });
+        return list.filter(x => f === 'both' || x.t.type === f);
+    }
+    function rangeAgg(range, f) {
+        const r = { p:{done:0,total:0}, s:{done:0,total:0}, days:0, perfect:0, perTask:{} };
+        TASKS.forEach(t => r.perTask[t.id] = { t, done:0, total:0 });
+        for (let d = range.s; d <= range.e; d = addDays(d, 1)) {
+            const info = dayInfo(d);
+            if (info.state !== 'ok') continue;
+            info.items.forEach(i => { r.perTask[i.t.id].done += i.cr; r.perTask[i.t.id].total++; });
+            r.p.done += info.personal.done; r.p.total += info.personal.total;
+            r.s.done += info.shared.done;   r.s.total += info.shared.total;
+            const a = agg(info, f);
+            if (a.total) { r.days++; if (a.done === a.total) r.perfect++; }
         }
+        return r;
+    }
 
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+    /* ---------- ring drawing ---------- */
+    function arc(c, r, w, pct, color, track) {
+        const C = 2 * Math.PI * r, p = pct == null ? 0 : Math.max(0, Math.min(1, pct));
+        let s = `<circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${track}" stroke-width="${w}"/>`;
+        if (p > 0) s += `<circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${C * p} ${C}" transform="rotate(-90 ${c} ${c})"/>`;
+        return s;
+    }
+    function rings(size, f, pPct, sPct, w) {
+        const c = size / 2;
+        if (f === 'both') {
+            return arc(c, c - w/2 - .5, w, sPct, PINK, 'rgba(236,72,153,.15)') + arc(c, c - w*1.5 - 2, w, pPct, PURPLE, 'rgba(124,58,237,.15)');
         }
+        const w2 = w * 1.25;
+        return f === 'shared' ? arc(c, c - w2/2 - .5, w2, sPct, PINK, 'rgba(236,72,153,.15)') : arc(c, c - w2/2 - .5, w2, pPct, PURPLE, 'rgba(124,58,237,.15)');
+    }
+    function bigRing(size, f, pPct, sPct, cPct, w) {
+        const txt = cPct == null ? '–' : Math.round(cPct * 100) + '%';
+        const color = prefs.theme === 'dark' ? '#eeeaf5' : '#1a1a1a';
+        return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${rings(size, f, pPct, sPct, w)}<text x="${size/2}" y="${size/2}" text-anchor="middle" dominant-baseline="central" font-size="${size*.2}" font-weight="700" fill="${color}">${txt}</text></svg>`;
+    }
+    function dayCell(date, f, size, withNum) {
+        const info = dayInfo(date), a = agg(info, f), c = size / 2, today = todayKey();
+        const num = parse(date).getDate(), isToday = date === today;
+        let inner, label;
+        if (info.state === 'nodata') { inner = `<circle cx="${c}" cy="${c}" r="${c-3}" fill="none" stroke="#d4d4d8" stroke-dasharray="2 3" stroke-width="1.5"/>`; label = 'no data'; }
+        else if (a.total === 0) { inner = `<circle cx="${c}" cy="${c}" r="${c-3}" fill="none" stroke="#e5e5e5" stroke-dasharray="3 3" stroke-width="1.5"/>`; label = 'rest day'; }
+        else { inner = rings(size, f, a.pPct, a.sPct, size * .105); label = info.state === 'future' ? 'upcoming' : Math.round((a.cPct || 0) * 100) + '% complete'; }
+        const numFill = info.state === 'nodata' ? '#c4c4c8' : (info.state === 'future' ? '#999' : '#1a1a1a');
+        const bg = isToday ? `<circle cx="${c}" cy="${c}" r="${size*.2}" fill="${PURPLE}"/>` : '';
+        const t = withNum ? `<text x="${c}" y="${c}" text-anchor="middle" dominant-baseline="central" font-size="${size*.3}" font-weight="${isToday?700:500}" fill="${isToday?'#fff':numFill}">${num}</text>` : '';
+        const gift = earnedOn(date, f).length ? '<span class="badge">🎁</span>' : '';
+        return `<button class="day" onclick="openDay('${date}')" aria-label="${shortDate(date)}, ${label}"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${inner}${bg}${t}</svg>${gift}</button>`;
+    }
 
-        function showCreateNestModal() {
-            document.getElementById('createNestModal').classList.add('active');
-        }
+    /* ---------- calendar screen ---------- */
+    let F = 'personal';                      // default filter: personal goals only
+    let P = { mode:'month', cursor: todayKey() };
+    const PERIODS = [['week','Week'],['month','Month'],['quarter','Quarter'],['year','Year']];
+    const FILTERS = [['personal','Personal'],['shared','Shared'],['both','Both']];
 
-        function showJoinNestModal() {
-            document.getElementById('joinNestModal').classList.add('active');
-        }
+    function rangeOf(mode, cur) {
+        const d = parse(cur), y = d.getFullYear(), m = d.getMonth();
+        if (mode === 'week')    { const s = addDays(cur, -d.getDay()); return { s, e: addDays(s, 6) }; }
+        if (mode === 'month')   return { s: fmt(new Date(y, m, 1)), e: fmt(new Date(y, m + 1, 0)) };
+        if (mode === 'quarter') { const q = Math.floor(m / 3) * 3; return { s: fmt(new Date(y, q, 1)), e: fmt(new Date(y, q + 3, 0)) }; }
+        return { s: `${y}-01-01`, e: `${y}-12-31` };
+    }
+    function shiftedCursor(dir) {
+        const d = parse(P.cursor), y = d.getFullYear(), m = d.getMonth();
+        if (P.mode === 'week') return addDays(P.cursor, 7 * dir);
+        if (P.mode === 'month') return fmt(new Date(y, m + dir, 1));
+        if (P.mode === 'quarter') return fmt(new Date(y, m + 3 * dir, 1));
+        return fmt(new Date(y + dir, 0, 1));
+    }
+    const canShift = dir => { const r = rangeOf(P.mode, shiftedCursor(dir)); return dir > 0 ? r.s <= todayKey() : r.e >= S.start; };
+    function periodLabel(r) {
+        const s = parse(r.s), e = parse(r.e);
+        if (P.mode === 'week') return { t: `${shortDate(r.s)} – ${s.getMonth() === e.getMonth() ? e.getDate() : shortDate(r.e)}`, sub: String(e.getFullYear()) };
+        if (P.mode === 'month') return { t: MONTHS[s.getMonth()], sub: String(s.getFullYear()) };
+        if (P.mode === 'quarter') return { t: `Q${Math.floor(s.getMonth()/3)+1} ${s.getFullYear()}`, sub: `${MONTHS[s.getMonth()].slice(0,3)} – ${MONTHS[e.getMonth()].slice(0,3)}` };
+        return { t: String(s.getFullYear()), sub: 'Full year' };
+    }
+    function setFilter(f) { F = f; renderCalendar(); }
+    function setPeriod(m) { P.mode = m; renderCalendar(); }
+    function shift(dir) { if (!canShift(dir)) return; P.cursor = shiftedCursor(dir); renderCalendar(); }
+    function goToday() { P.cursor = todayKey(); renderCalendar(); }
+    function drill(date, mode) { P.cursor = date; P.mode = mode; renderCalendar(); }
 
-        function showCreateTaskModal() {
-            document.getElementById('createTaskModal').classList.add('active');
+    function monthGrid(y, m, size, numbers) {
+        const first = new Date(y, m, 1), days = new Date(y, m + 1, 0).getDate();
+        let h = '<div class="cal-grid">' + DOWS.map(d => `<div class="cal-dow">${d[0]}</div>`).join('');
+        for (let i = 0; i < first.getDay(); i++) h += '<div></div>';
+        for (let d = 1; d <= days; d++) h += dayCell(`${y}-${pad(m+1)}-${pad(d)}`, F, size, numbers);
+        return h + '</div>';
+    }
+    function calendarBody(r) {
+        const s = parse(r.s), today = todayKey();
+        if (P.mode === 'week') {
+            let h = '<div class="cal-grid">' + DOWS.map(d => `<div class="cal-dow">${d.slice(0,3)}</div>`).join('');
+            for (let i = 0; i < 7; i++) h += dayCell(addDays(r.s, i), F, 40, true);
+            return h + '</div>';
         }
+        if (P.mode === 'month') return monthGrid(s.getFullYear(), s.getMonth(), 40, true);
+        if (P.mode === 'quarter') {
+            let h = '';
+            for (let i = 0; i < 3; i++) h += `<div class="month-block"><div class="month-title">${MONTHS[s.getMonth()+i]}</div>${monthGrid(s.getFullYear(), s.getMonth()+i, 32, true)}</div>`;
+            return h;
+        }
+        let h = '<div class="year-grid">';
+        for (let m = 0; m < 12; m++) {
+            const mr = rangeOf('month', `${s.getFullYear()}-${pad(m+1)}-01`), ag = rangeAgg(mr, F);
+            const a = agg({ personal: ag.p, shared: ag.s }, F), future = mr.s > today, none = !future && a.total === 0;
+            const ring = (future || none)
+                ? `<svg width="56" height="56"><circle cx="28" cy="28" r="24" fill="none" stroke="${none ? '#d4d4d8' : '#e5e5e5'}" stroke-width="2" stroke-dasharray="3 3"/></svg>`
+                : bigRing(56, F, a.pPct, a.sPct, a.cPct, 6);
+            h += `<button class="year-tile ${future || none ? 'disabled' : ''}" ${future || none ? '' : `onclick="drill('${mr.s}','month')"`}><div class="m">${MONTHS[m].slice(0,3)}</div>${ring}<div class="p">${future ? 'upcoming' : none ? 'no data' : `${ag.perfect} perfect days`}</div></button>`;
+        }
+        return h + '</div>';
+    }
 
-        function closeModals() {
-            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        }
+    function cycleInfo(t) {
+        const today = todayKey(), c = S.cyc[t.id];
+        if (c.unlocked) return { state:'unlocked', count:t.target, pct:1 };
+        if (c.start > today) return { state:'next', count:0, pct:0, startsIn: diffDays(today, c.start) };
+        const count = Math.min(t.target, cycleCount(t, today)), end = addDays(c.start, t.window - 1), left = diffDays(today, end) + 1;
+        let avail = 0;
+        for (let d = isDone(t, today) ? addDays(today, 1) : today; d <= end; d = addDays(d, 1)) if (t.days.includes(parse(d).getDay())) avail++;
+        return { state: (t.target - count) > avail ? 'risk' : 'active', count, pct: count / t.target, left, end };
+    }
+    function cycleMeta(t, ci) {
+        if (ci.state === 'unlocked') return '🎉 Deserving unlocked – claim it!';
+        if (ci.state === 'next') return `Reward claimed ✓ · new cycle starts ${ci.startsIn === 1 ? 'tomorrow' : 'in ' + ci.startsIn + ' days'}`;
+        return `${ci.count} / ${t.target} check-ins • 🎁 ${t.reward} • ${ci.left}d left${ci.state === 'risk' ? ' ⚠️ at risk' : ''}`;
+    }
 
-        function toggleCheckbox(el) {
-            el.classList.toggle('checked');
-            el.innerHTML = el.classList.contains('checked') ? '✓' : '';
+    function renderCalendar() {
+        const el = document.getElementById('calendarScreen'), r = rangeOf(P.mode, P.cursor), lbl = periodLabel(r), today = todayKey();
+        const ag = rangeAgg(r, F), a = agg({ personal: ag.p, shared: ag.s }, F);
+        const noun = { week:'week', month:'month', quarter:'quarter', year:'year' }[P.mode];
+        let h = `<div class="seg">${FILTERS.map(([k,n]) => `<button class="seg-btn ${F===k?'active':''} ${k==='shared'?'shared':''}" onclick="setFilter('${k}')">${n}</button>`).join('')}</div>`;
+        h += `<div class="seg">${PERIODS.map(([k,n]) => `<button class="seg-btn ${P.mode===k?'active':''}" onclick="setPeriod('${k}')">${n}</button>`).join('')}</div>`;
+        h += `<div class="nav-row"><button class="nav-arrow" onclick="shift(-1)" ${canShift(-1)?'':'disabled'} aria-label="Previous">‹</button>
+              <div class="label">${lbl.t}<small>${lbl.sub}${(r.s <= today && today <= r.e) ? '' : `<button class="today-chip" onclick="goToday()">Today</button>`}</small></div>
+              <button class="nav-arrow" onclick="shift(1)" ${canShift(1)?'':'disabled'} aria-label="Next">›</button></div>`;
+
+        // summary
+        if (a.total === 0) {
+            h += `<div class="empty">${r.e < S.start ? 'No data – this is before you started tracking.' : r.s > today ? 'This period hasn’t started yet.' : `No ${F === 'both' ? '' : F + ' '}goals were scheduled in this ${noun}.`}</div>`;
+        } else {
+            const partial = r.s < S.start || r.e > today;
+            h += `<div class="sum-card">${bigRing(96, F, a.pPct, a.sPct, a.cPct, 9)}<div class="sum-text">
+                <b>${Math.round(a.done)}</b> of <b>${a.total}</b> check-ins done<br>
+                <b>${ag.perfect}</b> perfect day${ag.perfect === 1 ? '' : 's'} of ${ag.days}<br>
+                ${F !== 'shared' ? `<span class="dot" style="background:${PURPLE}"></span>Personal ${a.pPct == null ? '–' : Math.round(a.pPct*100) + '%'}<br>` : ''}
+                ${F !== 'personal' ? `<span class="dot" style="background:${PINK}"></span>Shared ${a.sPct == null ? '–' : Math.round(a.sPct*100) + '%'}` : ''}
+                ${partial ? `<br><i>${r.s < S.start ? 'Tracking began ' + shortDate(S.start) : 'Still in progress'} – only tracked days count</i>` : ''}</div></div>`;
         }
+        h += calendarBody(r);
+        h += `<div class="legend">${F !== 'shared' ? `<span><span class="dot" style="background:${PURPLE}"></span>Personal${F==='both'?' (inner)':''}</span>` : ''}${F !== 'personal' ? `<span><span class="dot" style="background:${PINK}"></span>Shared${F==='both'?' (outer)':''}</span>` : ''}<span>🎁 deserving earned</span><span>┄ rest / no data</span></div>`;
+
+        // current deserving timelines
+        h += `<div class="section-title">Deserving timelines · current cycle</div>`;
+        const vis = TASKS.filter(t => F === 'both' || t.type === F);
+        h += vis.map(t => { const ci = cycleInfo(t); return `<div class="mini-row"><div class="ic">${t.icon}</div><div class="body">
+            <div class="nm">${t.name}<span>${ci.state === 'unlocked' ? '<button class="mini-btn gold" onclick="claimReward(\'' + t.id + '\')">Claim 🎁</button>' : ci.state === 'next' ? 'next cycle' : ci.left + 'd left'}</span></div>
+            <div class="progress-small" style="margin:5px 0 3px"><div class="progress-bar ${t.type==='shared'?'shared':''} ${ci.state==='unlocked'?'done':''}" style="width:${ci.pct*100}%"></div></div>
+            <div class="quest-meta">${cycleMeta(t, ci)}</div></div></div>`; }).join('');
+        h += `<div class="quest-meta" style="margin-bottom:6px">Claiming a reward resets this view to 0 – every check-in stays in the calendar above.</div>`;
+
+        // per task this period
+        h += `<div class="section-title">By goal this ${noun}</div>`;
+        const rows = vis.map(t => ag.perTask[t.id]).filter(x => x.total > 0);
+        h += rows.length ? rows.map(x => { const pc = x.done / x.total; return `<div class="mini-row"><div class="ic">${x.t.icon}</div><div class="body"><div class="nm">${x.t.name}<span>${Math.round(x.done)}/${x.total} · ${Math.round(pc*100)}%</span></div>
+            <div class="progress-small" style="margin:5px 0 0"><div class="progress-bar ${x.t.type==='shared'?'shared':''}" style="width:${pc*100}%"></div></div></div></div>`; }).join('') : '<div class="empty">Nothing scheduled in this period.</div>';
+
+        // deservings in range
+        h += `<div class="section-title">Deservings earned this ${noun}</div>`;
+        const earned = [];
+        for (let d = r.s; d <= r.e && d <= today; d = addDays(d, 1)) earned.push(...earnedOn(d, F).map(x => ({ ...x, date: d })));
+        h += earned.length ? earned.map(x => `<div class="mini-row"><div class="ic">🎁</div><div class="body"><div class="nm">${x.t.reward}<span>${shortDate(x.date)}</span></div><div class="quest-meta">${x.t.icon} ${x.t.name} · ${x.claimed ? '<span class="tag ok">Claimed</span>' : '<span class="tag warn">Ready to claim</span>'}</div></div></div>`).join('') : '<div class="empty">No deservings earned in this period.</div>';
+        el.innerHTML = h;
+    }
+
+    /* ---------- day detail sheet ---------- */
+    function openDay(date) {
+        const info = dayInfo(date), a = agg(info, F), today = todayKey(), d = parse(date);
+        let h = `<div class="sheet-grip"></div><h3>${DOWS[d.getDay()]}, ${shortDate(date)}${date === today ? ' <span class="tag">Today</span>' : ''}</h3>`;
+        if (info.state === 'nodata') h += '<div class="sub">Before you started tracking – no data for this day.</div>';
+        else {
+            h += `<div class="sub">${info.state === 'future' ? 'Upcoming – scheduled goals' : (FILTERS.find(x => x[0] === F)[1] + ' goals')}</div>`;
+            if (a.total > 0 && info.state !== 'future') h += `<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">${bigRing(84, F, a.pPct, a.sPct, a.cPct, 8)}<div class="sum-text"><b>${Math.round(a.done * 10) / 10}</b> of <b>${a.total}</b> check-ins<br>${a.done === a.total ? '🎉 Perfect day' : date === today ? 'Still in progress' : 'Some goals missed'}</div></div>`;
+            const items = info.items.filter(i => F === 'both' || i.t.type === F);
+            h += items.length ? items.map(i => {
+                let st;
+                if (info.state === 'future') st = '<span class="tag">Scheduled</span>';
+                else if (i.t.type === 'personal') st = i.cr ? '<span class="tag ok">✓ Done</span>' : (date === today ? '<span class="tag warn">Pending</span>' : '<span class="tag warn">Missed</span>');
+                else { const e = i.entry || {}; st = `<span class="tag ${i.cr === 1 ? 'ok' : 'warn'}">You ${e.me ? '✓' : '·'} / Sam ${e.partner ? '✓' : '·'}</span>`; }
+                return `<div class="mini-row"><div class="ic">${i.t.icon}</div><div class="body"><div class="nm">${i.t.name}${st}</div><div class="quest-meta">${i.t.desc}</div></div></div>`;
+            }).join('') : '<div class="empty">Rest day – nothing scheduled for this filter.</div>';
+            const earned = earnedOn(date, F);
+            if (earned.length) h += `<div class="section-title" style="margin-top:8px">Deserving earned</div>` + earned.map(x => `<div class="banner"><span style="font-size:22px">🎁</span><div class="t"><b>${x.t.reward}</b><br>${x.t.icon} ${x.t.name} · ${x.claimed ? 'claimed' : 'ready to claim'}</div></div>`).join('');
+            if (date === today) h += `<button class="btn btn-secondary" onclick="closeDay();showScreen('${F === 'shared' ? 'shared' : 'home'}')">Go check in</button>`;
+        }
+        document.getElementById('daySheetBody').innerHTML = h;
+        document.getElementById('daySheet').classList.add('open');
+    }
+    function closeDay() { document.getElementById('daySheet').classList.remove('open'); }
+
+    /* ---------- check-ins & deserving flow ---------- */
+    function toast(msg) {
+        const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+        clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 2600);
+    }
+    function setDone(id, who, val) {
+        if (document.getElementById('celebrateOverlay').classList.contains('open')) return;     // ignore taps behind the modal
+        catchUpIfNewDay();
+        const t = taskById(id), today = todayKey(), c = S.cyc[id];
+        if (!t.days.includes(parse(today).getDay())) { toast(`${t.name} isn’t scheduled today`); return; }
+        const cur = entryOf(today, id) || { me:false, partner:false };
+        if (!!cur[who] === val) return;
+        if (!val && c.start > today) { toast('Reward already claimed – check-in can’t be undone'); renderAll(); return; }
+        (S.comp[today] = S.comp[today] || {})[id] = { ...cur, [who]: val };
+        const nowDone = isDone(t, today);
+        if (!val && c.unlocked === today && cycleCount(t, today) < t.target) { c.unlocked = null; toast('Deserving revoked – check-in undone'); }
+        let res = null;
+        if (val) res = processDay(t, today, false, false);
+        save(); renderAll();
+        if (res === 'unlocked') celebrate(id, who);
+        else if (val && nowDone && who === 'partner') toast(`Sam checked in ${t.name} ✓`);
+    }
+    function toggleToday(id) { const t = taskById(id), e = entryOf(todayKey(), id); setDone(id, 'me', !(e && e.me)); }
+    function simulatePartner(id) { const e = entryOf(todayKey(), id); setDone(id, 'partner', !(e && e.partner)); }
+
+    function celebrate(id, who) {
+        const t = taskById(id), c = S.cyc[id], n = cycleCount(t, c.unlocked), daysUsed = diffDays(c.start, c.unlocked) + 1;
+        const colors = ['#f59e0b','#7c3aed','#ec4899','#16a34a','#3b82f6'];
+        const conf = Array.from({ length: 26 }, (_, i) => `<span class="confetti" style="left:${(i*37)%100}%;background:${colors[i%5]};animation-delay:${(i%9)*.18}s;animation-duration:${2+(i%5)*.35}s"></span>`).join('');
+        document.getElementById('celebrateBody').innerHTML = `${conf}
+            <div class="trophy">🏆</div><h2>Deserving Unlocked!</h2>
+            <div style="font-size:13px;color:#666">${t.icon} ${t.name}${t.type === 'shared' ? (who === 'partner' ? ' · Sam just completed it' : ' · you both did it') : ''}</div>
+            <div class="reward-box">🎁 ${t.reward}</div>
+            <div class="note"><b>${n} / ${t.target}</b> check-ins in <b>${daysUsed}</b> day${daysUsed === 1 ? '' : 's'} – this goal’s window is ${t.window} days (${Math.max(0, t.window - daysUsed)} to spare).<br>
+            Claim it and this goal resets to <b>0 / ${t.target}</b> for the next cycle. Every check-in stays in your Activity calendar and yearly history.</div>
+            <button class="btn btn-primary" onclick="claimReward('${id}', true)">Claim reward</button>
+            <button class="btn btn-secondary" onclick="closeCelebrate()">Later</button>`;
+        document.getElementById('celebrateOverlay').classList.add('open');
+    }
+    function closeCelebrate() { document.getElementById('celebrateOverlay').classList.remove('open'); renderAll(); }
+    function claimReward(id, fromModal) {
+        const t = taskById(id), c = S.cyc[id];
+        if (!c.unlocked) { toast('Already claimed'); closeCelebrate(); return; }       // double-claim guard
+        const when = c.unlocked;
+        claimCycle(t, todayKey(), 'Alex'); save(); renderAll();
+        document.getElementById('celebrateBody').innerHTML = `
+            <div class="trophy">✅</div><h2>Reward claimed!</h2>
+            <div class="reward-box">🎁 ${t.reward}</div>
+            <div class="note"><b>${t.icon} ${t.name}</b> progress is back to <b>0 / ${t.target}</b>. The next ${t.window}-day cycle starts tomorrow.<br><br>
+            Your history is saved: ${shortDate(when)} now shows a 🎁 on the calendar, and week / month / quarter / year totals are unchanged.</div>
+            <button class="btn btn-primary" onclick="closeCelebrate();F='${t.type}';P={mode:'month',cursor:todayKey()};showScreen('calendar')">See it in Activity</button>
+            <button class="btn btn-secondary" onclick="closeCelebrate()">Done</button>`;
+        document.getElementById('celebrateOverlay').classList.add('open');
+    }
+
+    /* ---------- Home / Together / Profile ---------- */
+    function todayRing() {
+        const info = dayInfo(todayKey()), a = agg(info, 'both');
+        return { a, svg: bigRing(64, 'both', a.pPct, a.sPct, a.cPct, 6) };
+    }
+    function questCard(t) {
+        const today = todayKey(), sched = t.days.includes(parse(today).getDay()), e = entryOf(today, t.id), ci = cycleInfo(t);
+        return `<div class="quest-card ${sched ? '' : 'rest'} ${ci.state === 'unlocked' ? 'unlocked' : ''}">
+            <div class="quest-icon">${t.icon}</div><div class="quest-content">
+            <div class="quest-title">${t.name}</div><div class="quest-desc">${sched ? t.desc : 'Rest day – not scheduled today'}</div>
+            <div class="progress-small"><div class="progress-bar ${ci.state==='unlocked'?'done':''}" style="width:${ci.pct*100}%"></div></div>
+            <div class="quest-meta">${cycleMeta(t, ci)}</div>
+            ${ci.state === 'unlocked' ? `<div style="margin-top:6px"><button class="mini-btn gold" onclick="claimReward('${t.id}')">Claim 🎁 ${t.reward}</button></div>` : ''}</div>
+            <div class="checkbox ${e && e.me ? 'checked' : ''} ${sched ? '' : 'disabled'}" ${sched ? `onclick="toggleToday('${t.id}')"` : ''}>${e && e.me ? '✓' : ''}</div></div>`;
+    }
+    function streak() {
+        let d = todayKey(), n = 0;
+        const active = x => { const i = dayInfo(x); return i.state === 'ok' && i.personal.done > 0; };
+        if (!active(d)) d = addDays(d, -1);
+        while (d >= S.start && active(d)) { n++; d = addDays(d, -1); }
+        return n;
+    }
+    function totals() {
+        let total = 0;
+        for (const d in S.comp) for (const id in S.comp[d]) { const t = taskById(id); if (t && t.type === 'personal' && S.comp[d][id].me) total++; }
+        return total;
+    }
+    const level = n => n < 10 ? 'Growing 📈' : n < 25 ? 'Impressive ✨' : n < 50 ? 'Remarkable 🌟' : n < 100 ? 'Exceptional 🔥' : 'Unstoppable 🚀';
+
+    function renderHome() {
+        const tr = todayRing(), d = parse(todayKey());
+        let h = `<div class="card today-card" onclick="showScreen('calendar')">${tr.svg}<div style="flex:1"><div class="card-title">Welcome back, Alex</div>
+            <div class="card-subtitle" style="margin:0">${DOWS[d.getDay()]}, ${shortDate(todayKey())}<br>${tr.a.total ? `${Math.round(tr.a.done*10)/10} / ${tr.a.total} check-ins today` : 'Rest day'}</div>
+            <div class="card-action" style="margin-top:4px">View activity calendar ›</div></div></div>`;
+        const pending = TASKS.filter(t => S.cyc[t.id].unlocked);
+        h += pending.map(t => `<div class="banner"><span style="font-size:22px">🎁</span><div class="t"><b>${t.reward}</b> is ready<br>${t.icon} ${t.name}</div><button class="mini-btn gold" onclick="claimReward('${t.id}')">Claim</button></div>`).join('');
+        h += `<div class="section-title">Today's Quests</div>` + TASKS.filter(t => t.type === 'personal').map(questCard).join('');
+        h += `<div class="section-title">Your Stats</div><div class="stats-grid"><div class="stat-card"><div class="stat-value">${streak()}</div><div class="stat-label">Day streak</div></div><div class="stat-card"><div class="stat-value">${totals()}</div><div class="stat-label">Total Quests</div></div></div>`;
+        document.getElementById('homeScreen').innerHTML = h;
+    }
+    function renderShared() {
+        const today = todayKey(), dow = parse(today).getDay();
+        let h = `<div class="card"><div class="card-title">Together 💑</div><div class="card-subtitle" style="margin:0">A shared goal counts only when <b>both</b> of you check in.</div></div><div class="section-title">Shared Quests</div>`;
+        h += TASKS.filter(t => t.type === 'shared').map(t => {
+            const sched = t.days.includes(dow), e = entryOf(today, t.id) || {}, ci = cycleInfo(t);
+            let nextDay = '';
+            if (!sched) for (let i = 1; i < 8; i++) { const x = parse(addDays(today, i)); if (t.days.includes(x.getDay())) { nextDay = DOWS[x.getDay()]; break; } }
+            return `<div class="goal-card ${ci.state === 'unlocked' ? 'quest-card unlocked' : ''}" style="display:block">
+                <div class="goal-header"><div class="goal-title">${t.icon} ${t.name}</div><div class="goal-status">${ci.state === 'unlocked' ? '🎉 Unlocked' : ci.state === 'next' ? 'New cycle soon' : ci.state === 'risk' ? '⚠️ At risk' : 'Active'}</div></div>
+                <div class="quest-desc">${t.desc}</div>
+                <div class="progress-small"><div class="progress-bar shared ${ci.state==='unlocked'?'done':''}" style="width:${ci.pct*100}%"></div></div>
+                <div class="quest-meta">${cycleMeta(t, ci)}</div>
+                ${sched ? `<div class="goal-partners"><div class="partner-badge ${e.me ? 'partner-done' : 'partner-pending'}">${e.me ? '✓' : '⏳'} Alex</div><div class="partner-badge ${e.partner ? 'partner-done' : 'partner-pending'}">${e.partner ? '✓' : '⏳'} Sam</div></div>
+                <div style="display:flex;gap:8px;margin-top:10px"><button class="mini-btn" onclick="toggleToday('${t.id}')">${e.me ? 'Undo my check-in' : 'Check in'}</button><button class="mini-btn ghost" onclick="simulatePartner('${t.id}')">Demo: ${e.partner ? 'undo' : 'Sam checks in'}</button></div>`
+                : `<div class="goal-partners"><div class="partner-badge">Not scheduled today · next ${nextDay}</div></div>`}
+                ${ci.state === 'unlocked' ? `<div style="margin-top:10px"><button class="mini-btn gold" onclick="claimReward('${t.id}')">Claim 🎁 ${t.reward}</button></div>` : ''}</div>`;
+        }).join('');
+        document.getElementById('sharedScreen').innerHTML = h;
+    }
+    function renderProfile() {
+        const n = totals(), recent = S.claims.slice(-6).reverse();
+        let h = `<div class="profile-header"><div class="profile-avatar">${prefs.avatar}</div><div class="profile-name">Alex</div><div class="profile-meta">Consistency Level: ${level(n)}</div></div>
+            <div class="card"><div class="card-title">Your Nest</div><div style="margin-top:12px"><div class="card-subtitle" style="margin-bottom:4px">Alex & Sam's Nest</div><div style="font-size:12px;color:#999">Code: <strong>ABC123</strong></div></div></div>
+            <div class="section-title">Statistics</div><div class="stats-grid">
+            <div class="stat-card"><div class="stat-value">${streak()}</div><div class="stat-label">Current Streak</div></div>
+            <div class="stat-card"><div class="stat-value">${n}</div><div class="stat-label">Total Completed</div></div>
+            <div class="stat-card"><div class="stat-value">${S.claims.length}</div><div class="stat-label">Rewards Earned</div></div>
+            <div class="stat-card"><div class="stat-value">${TASKS.length}</div><div class="stat-label">Active Quests</div></div></div>
+            <div class="section-title">Personalize</div>
+            <div class="card">
+                <div class="settings-group"><div class="settings-label">Profile picture</div>
+                    <div class="profile-emoji-picker">${PROFILE_EMOJIS.map(emoji => `<button class="profile-emoji-option ${prefs.avatar === emoji ? 'selected' : ''}" onclick="setProfileAvatar('${emoji}')" aria-label="Choose ${emoji} avatar" aria-pressed="${prefs.avatar === emoji}">${emoji}</button>`).join('')}</div>
+                </div>
+                <div class="settings-group"><div class="settings-label">Appearance</div>
+                    <div class="appearance-options">
+                        <button class="appearance-option ${prefs.theme === 'light' ? 'active' : ''}" onclick="setTheme('light')">☀️ Light</button>
+                        <button class="appearance-option ${prefs.theme === 'dark' ? 'active' : ''}" onclick="setTheme('dark')">🌙 Dark</button>
+                    </div>
+                </div>
+                <div class="settings-group"><div class="reminder-toggle"><div class="settings-label" style="margin:0">Reward reminders</div><input type="checkbox" ${prefs.reminders ? 'checked' : ''} onchange="toggleRewardReminders(this.checked)" aria-label="Enable reward reminders"></div>
+                    <div class="demo-note">Motivational 7 PM local-time reminder when a deserving is one check-in away. Demo preview only; this HTML prototype does not send system notifications.</div>
+                </div>
+            </div>
+            <div class="section-title">Recent rewards</div>`;
+        h += recent.length ? recent.map(c => { const t = taskById(c.task); return `<div class="mini-row"><div class="ic">🎁</div><div class="body"><div class="nm">${c.reward}<span>${shortDate(c.claimed)}</span></div><div class="quest-meta">${t.icon} ${t.name} · ${c.count}/${t.target} check-ins</div></div></div>`; }).join('') : '<div class="empty">No rewards claimed yet.</div>';
+        h += `<div class="section-title">Actions</div><button class="btn btn-secondary" onclick="resetDemo()">Reset demo data</button><button class="btn btn-secondary" onclick="goToAuth()">Sign Out</button>`;
+        document.getElementById('profileScreen').innerHTML = h;
+    }
+    function renderAll() { renderHome(); renderCalendar(); renderShared(); renderProfile(); }
+    function resetDemo() { try { localStorage.removeItem(STORE_KEY); } catch (e) {} seed(); save(); P = { mode:'month', cursor: todayKey() }; F = 'personal'; renderAll(); toast('Demo data reset'); }
+
+    /* ---------- navigation ---------- */
+    const TITLES = { home:'Home', calendar:'Activity', shared:'Shared Goals', profile:'Profile' };
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id + 'Screen').classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.screen === id));
+        document.getElementById('headerTitle').textContent = TITLES[id];
+        document.querySelector('.phone-content').classList.remove('on-auth');
+        document.querySelector('.screen-container').scrollTop = 0;
+        closeDay();
+        renderAll();
+    }
+    function switchAuthTab(tab) {
+        const signin = tab === 'signin';
+        document.getElementById('signinForm').style.display = signin ? 'block' : 'none';
+        document.getElementById('signupForm').style.display = signin ? 'none' : 'block';
+        const tabs = document.querySelectorAll('#authScreen .tab-btn');
+        tabs[0].classList.toggle('active', signin); tabs[1].classList.toggle('active', !signin);
+    }
+    function selectAvatar(el, emoji) {
+        document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
+        el.classList.add('selected');
+        signupAvatar = emoji;
+    }
+    function setProfileAvatar(emoji) {
+        if (!PROFILE_EMOJIS.includes(emoji)) return;
+        prefs.avatar = emoji;
+        savePrefs();
+        renderProfile();
+        toast('Profile picture updated');
+    }
+    function toggleRewardReminders(enabled) {
+        prefs.reminders = !!enabled;
+        savePrefs();
+        renderProfile();
+        toast(enabled ? 'Reward reminders enabled · daily at 7 PM' : 'Reward reminders turned off');
+    }
+    function goToHome() { showScreen('home'); }
+    function goToAuth() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('authScreen').classList.add('active');
+        document.getElementById('headerTitle').textContent = 'Home';
+        document.querySelector('.phone-content').classList.add('on-auth');
+    }
+    function toggleNotifications() {
+        const ready = TASKS.filter(t => S.cyc[t.id].unlocked);
+        if (ready.length) {
+            toast(`${ready.length} deserving${ready.length > 1 ? 's' : ''} ready to claim 🎁`);
+            return;
+        }
+        const upcoming = TASKS.filter(t => {
+            const ci = cycleInfo(t);
+            return ci.state !== 'unlocked' && ci.state !== 'next' && t.target - ci.count === 1;
+        });
+        if (prefs.reminders && upcoming.length) {
+            toast(`7 PM reminder preview: one more check-in unlocks ${upcoming[0].reward}. Keep going!`);
+        } else if (upcoming.length) {
+            toast(`${upcoming.length} reward${upcoming.length > 1 ? 's are' : ' is'} one check-in away. Turn on reminders in Profile.`);
+        } else {
+            toast('No rewards are one check-in away yet. Keep building your streak!');
+        }
+    }
+
+    /* ---------- day rollover (edge case: app left open past midnight) ---------- */
+    function catchUpIfNewDay() { if (S.processed < addDays(todayKey(), -1)) { catchUp(); save(); return true; } return false; }
+    setInterval(() => { if (catchUpIfNewDay()) { renderAll(); toast('New day – check-ins reset'); } }, 30000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && catchUpIfNewDay()) renderAll(); });
+
+    /* ---------- boot ---------- */
+    S = load();
+    loadPrefs();
+    applyTheme();
+    if (!S) { seed(); save(); } else { catchUp(); save(); }
+    document.querySelector('.phone-content').classList.add('on-auth');
+    renderAll();
     </script>
 </body>
 </html>

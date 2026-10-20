@@ -1,4 +1,4 @@
-# Proper Discipline App – Quick Start Guide
+# Proper Productive Pigeons App – Quick Start Guide
 
 ## 📱 Project is Ready!
 
@@ -40,7 +40,7 @@ Go to [Firebase Console](https://console.firebase.google.com/):
 1. Create new project: `ProperDisciplineApp`
 2. Enable Authentication (Email/Password)
 3. Create Firestore database (production mode)
-4. Add iOS app with bundle ID: `com.properDiscipline.app`
+4. Add iOS app with bundle ID: `com.properProductivePigeons.app`
 5. Download `GoogleService-Info.plist`
 6. Place in `ProperDisciplineApp/` folder (Xcode will recognize it)
 

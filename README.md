@@ -1,4 +1,4 @@
-# Proper Discipline App – iOS (Solo Levelling Theme)
+# Proper Productive Pigeons App – iOS (Solo Levelling Theme)
 
 A collaborative habit-tracking app for couples ("pigeons") with exponential checkpoint progression, personal and shared goals, and Solo Levelling theming.
 
@@ -98,7 +98,7 @@ pod install
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Create a new project: "ProperDisciplineApp"
-3. Add iOS app with bundle ID: `com.properDiscipline.app`
+3. Add iOS app with bundle ID: `com.properProductivePigeons.app`
 4. Download `GoogleService-Info.plist`
 5. Add to Xcode project (under ProperDisciplineApp target)
 

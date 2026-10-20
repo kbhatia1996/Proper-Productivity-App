@@ -1,25 +1,69 @@
 import SwiftUI
+import UIKit
 
-/// Solo Levelling color palette inspired by hunter aesthetic
+/// Solo Levelling aesthetic color palette (dark, dramatic, fantasy-like)
+/// Inspired by Solo Levelling anime visual style
 struct SoloLevellingTheme {
     // Primary colors
-    static let darkPurple = Color(red: 0.15, green: 0.08, blue: 0.25)
-    static let brightGold = Color(red: 0.95, green: 0.78, blue: 0.2)
-    static let deepBlack = Color(red: 0.05, green: 0.05, blue: 0.08)
-    static let silverWhite = Color(red: 0.92, green: 0.92, blue: 0.95)
+    static let darkPurple = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.15, green: 0.08, blue: 0.25, alpha: 1)
+            : UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+    })
+    static let brightGold = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.95, green: 0.78, blue: 0.2, alpha: 1)
+            : UIColor(red: 0.62, green: 0.42, blue: 0.0, alpha: 1)
+    })
+    static let deepBlack = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.05, green: 0.05, blue: 0.08, alpha: 1)
+            : UIColor(red: 0.96, green: 0.95, blue: 0.98, alpha: 1)
+    })
+    static let silverWhite = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.92, green: 0.92, blue: 0.95, alpha: 1)
+            : UIColor(red: 0.18, green: 0.17, blue: 0.21, alpha: 1)
+    })
     
-    // Accent colors
-    static let rankE = Color(red: 0.7, green: 0.7, blue: 0.7)   // Gray
-    static let rankD = Color(red: 0.2, green: 0.6, blue: 1.0)   // Blue
-    static let rankC = Color(red: 0.2, green: 1.0, blue: 0.6)   // Green
-    static let rankB = Color(red: 1.0, green: 0.8, blue: 0.2)   // Gold
-    static let rankA = Color(red: 1.0, green: 0.4, blue: 0.2)   // Red
-    static let rankS = Color(red: 0.8, green: 0.2, blue: 1.0)   // Purple
-    
-    // Success/Failure
-    static let successGreen = Color(red: 0.2, green: 0.8, blue: 0.4)
-    static let warningOrange = Color(red: 1.0, green: 0.6, blue: 0.1)
-    static let errorRed = Color(red: 1.0, green: 0.3, blue: 0.3)
+    // Progress tracking colors
+    static let progressGold = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 1.0, green: 0.92, blue: 0.23, alpha: 1)
+            : UIColor(red: 0.62, green: 0.42, blue: 0.0, alpha: 1)
+    })
+    static let progressAccent = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 1.0, green: 0.58, blue: 0.16, alpha: 1)
+            : UIColor(red: 0.62, green: 0.29, blue: 0.0, alpha: 1)
+    })
+    static let calendarPersonalAccent = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.2, green: 0.8, blue: 1.0, alpha: 1)
+            : UIColor(red: 0.0, green: 0.38, blue: 0.55, alpha: 1)
+    })
+    static let calendarSharedAccent = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1)
+            : UIColor(red: 0.62, green: 0.29, blue: 0.0, alpha: 1)
+    })
+
+    // Status colors
+    static let successGreen = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0.2, green: 0.8, blue: 0.4, alpha: 1)
+            : UIColor(red: 0.08, green: 0.42, blue: 0.2, alpha: 1)
+    })
+    static let warningOrange = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 1.0, green: 0.6, blue: 0.1, alpha: 1)
+            : UIColor(red: 0.62, green: 0.29, blue: 0.0, alpha: 1)
+    })
+    static let errorRed = Color(uiColor: UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 1.0, green: 0.3, blue: 0.3, alpha: 1)
+            : UIColor(red: 0.65, green: 0.12, blue: 0.12, alpha: 1)
+    })
     
     // Fonts
     static let displayFont = "System"  // Replace with custom font name if available
@@ -28,21 +72,6 @@ struct SoloLevellingTheme {
     // Sizes
     static let cornerRadius: CGFloat = 12
     static let shadowRadius: CGFloat = 8
-}
-
-// MARK: - Color Extensions
-extension Color {
-    static func rankColor(for rank: String) -> Color {
-        switch rank.uppercased() {
-        case "E": return SoloLevellingTheme.rankE
-        case "D": return SoloLevellingTheme.rankD
-        case "C": return SoloLevellingTheme.rankC
-        case "B": return SoloLevellingTheme.rankB
-        case "A": return SoloLevellingTheme.rankA
-        case "S": return SoloLevellingTheme.rankS
-        default: return SoloLevellingTheme.rankE
-        }
-    }
 }
 
 // MARK: - Style Modifiers

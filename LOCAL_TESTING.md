@@ -13,7 +13,7 @@ Let's walk through the app flow by examining the code structure and UI designs.
 #### Screen 1: Authentication View
 ```
 ┌─────────────────────────────────────────┐
-│    PROPER DISCIPLINE                    │
+│    PROPER PRODUCTIVE PIGEONS                    │
 │    Couples' Leveling System             │
 │                                         │
 │    [ Sign In | Sign Up ]                │

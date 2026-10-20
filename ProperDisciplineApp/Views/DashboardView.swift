@@ -2,8 +2,11 @@ import SwiftUI
 
 struct DashboardView: View {
     @EnvironmentObject var firebaseService: FirebaseService
-    @StateObject private var taskViewModel = TaskViewModel()
+    @ObservedObject var taskViewModel: TaskViewModel
     @State private var showNewTaskSheet = false
+    @State private var showSettings = false
+    @State private var notificationError: String?
+    @AppStorage("rewardRemindersEnabled") private var rewardRemindersEnabled = false
     
     var body: some View {
         ZStack {
@@ -19,18 +22,29 @@ struct DashboardView: View {
                                     .font(.system(size: 18, weight: .bold))
                                     .foregroundColor(SoloLevellingTheme.brightGold)
                                 HStack(spacing: 8) {
-                                    Text("Rank: \(pigeon.rank)")
-                                        .font(.system(size: 12))
-                                        .foregroundColor(Color.rankColor(for: pigeon.rank))
-                                    Text("XP: \(pigeon.xp)")
+                                    Text(pigeon.consistencyLevel)
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(SoloLevellingTheme.progressAccent)
+                                    Text("\(pigeon.totalTasksCompleted) completed")
                                         .font(.system(size: 12))
                                         .foregroundColor(SoloLevellingTheme.silverWhite.opacity(0.7))
                                 }
                             }
                             Spacer()
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 40))
-                                .foregroundColor(SoloLevellingTheme.brightGold)
+                            Text(pigeon.avatarEmoji)
+                                .font(.system(size: 38))
+                                .accessibilityLabel("Profile picture")
+                            Button {
+                                showSettings = true
+                            } label: {
+                                Image(systemName: "gearshape.fill")
+                                    .font(.system(size: 19))
+                                    .foregroundColor(SoloLevellingTheme.silverWhite.opacity(0.8))
+                                    .padding(8)
+                                    .background(SoloLevellingTheme.silverWhite.opacity(0.1))
+                                    .clipShape(Circle())
+                            }
+                            .accessibilityLabel("Settings")
                         }
                         .padding()
                         .themeCard()
@@ -49,7 +63,7 @@ struct DashboardView: View {
                             Spacer()
                             Image(systemName: "house.fill")
                                 .font(.system(size: 20))
-                                .foregroundColor(SoloLevellingTheme.rankC)
+                                .foregroundColor(SoloLevellingTheme.progressAccent)
                         }
                         .padding()
                         .themeCard()
@@ -77,7 +91,7 @@ struct DashboardView: View {
                     ScrollView {
                         VStack(spacing: 12) {
                             ForEach(taskViewModel.tasks) { task in
-                                TaskCardView(task: task)
+                                TaskCardView(task: task, allTasks: taskViewModel.tasks)
                             }
                         }
                         .padding()
@@ -100,20 +114,63 @@ struct DashboardView: View {
         }
         .onAppear {
             if let nestId = firebaseService.currentNest?.id {
-                Task {
+                _Concurrency.Task { @MainActor in
                     await taskViewModel.fetchTasks(nestId: nestId)
+                    await refreshRewardReminder()
                 }
             }
         }
         .sheet(isPresented: $showNewTaskSheet) {
             NewTaskSheet(taskViewModel: taskViewModel, nestId: firebaseService.currentNest?.id ?? "")
         }
+        .sheet(isPresented: $showSettings) {
+            AppearanceSettingsView(taskViewModel: taskViewModel)
+        }
+        .onChange(of: taskViewModel.tasks.count) { _ in
+            guard rewardRemindersEnabled else { return }
+            _Concurrency.Task { @MainActor in await refreshRewardReminder() }
+        }
+        .alert("Reward reminder couldn't be updated", isPresented: Binding(
+            get: { notificationError != nil },
+            set: { if !$0 { notificationError = nil } }
+        )) {
+            Button("OK", role: .cancel) { notificationError = nil }
+        } message: {
+            Text(notificationError ?? "")
+        }
+    }
+
+    @MainActor
+    private func refreshRewardReminder() async {
+        guard rewardRemindersEnabled, let pigeonId = firebaseService.currentPigeon?.id else { return }
+        do {
+            try await RewardNotificationService.shared.refreshUpcomingReminder(
+                tasks: taskViewModel.tasks,
+                pigeonId: pigeonId
+            )
+        } catch {
+            notificationError = error.localizedDescription
+        }
     }
 }
 
 struct TaskCardView: View {
     let task: Task
+    let allTasks: [Task]
+    @EnvironmentObject var firebaseService: FirebaseService
     @State private var isComplete = false
+    @State private var completedDays = 0
+    @State private var isSaving = false
+    @State private var notificationError: String?
+    @AppStorage("rewardRemindersEnabled") private var rewardRemindersEnabled = false
+    
+    private static let dayFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+    private var todayKey: String { Self.dayFormatter.string(from: Date()) }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -129,20 +186,19 @@ struct TaskCardView: View {
                 Spacer()
                 Image(systemName: isComplete ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 24))
-                    .foregroundColor(isComplete ? SoloLevellingTheme.successGreen : SoloLevellingTheme.rankE)
-                    .onTapGesture {
-                        isComplete.toggle()
-                    }
+                    .foregroundColor(isComplete ? SoloLevellingTheme.successGreen : SoloLevellingTheme.silverWhite.opacity(0.4))
+                    .onTapGesture { toggleToday() }
             }
             
             // Checkpoint Progress
-            if !task.checkpoints.isEmpty {
+            if let next = task.checkpoints.sorted(by: { $0.order < $1.order }).first(where: { completedDays < $0.dayThreshold })
+                ?? task.checkpoints.last {
                 HStack(spacing: 8) {
-                    Text("Next: \(task.checkpoints[0].deserving.title)")
+                    Text("Next: \(next.deserving.title)")
                         .font(.system(size: 11))
-                        .foregroundColor(SoloLevellingTheme.rankB)
+                        .foregroundColor(SoloLevellingTheme.progressGold)
                     Spacer()
-                    Text("0/\(task.checkpoints[0].dayThreshold) days")
+                    Text("\(min(completedDays, next.dayThreshold))/\(next.dayThreshold) days")
                         .font(.system(size: 11))
                         .foregroundColor(SoloLevellingTheme.silverWhite.opacity(0.6))
                 }
@@ -150,6 +206,47 @@ struct TaskCardView: View {
         }
         .padding()
         .themeCard()
+        .onAppear { _Concurrency.Task { @MainActor in await loadState() } }
+        .alert("Reward reminder couldn't be updated", isPresented: Binding(
+            get: { notificationError != nil },
+            set: { if !$0 { notificationError = nil } }
+        )) {
+            Button("OK", role: .cancel) { notificationError = nil }
+        } message: {
+            Text(notificationError ?? "")
+        }
+    }
+    
+    private func loadState() async {
+        guard let pigeonId = firebaseService.currentPigeon?.id,
+              let completions = await firebaseService.fetchCompletions(taskId: task.id, pigeonId: pigeonId) else { return }
+        let done = completions.filter { $0.isComplete }
+        completedDays = done.count
+        isComplete = done.contains { $0.date == todayKey }
+    }
+    
+    /// Saves the check-in so the calendar and streaks see it; ignores taps while a save is in flight
+    private func toggleToday() {
+        guard !isSaving, let pigeonId = firebaseService.currentPigeon?.id else { return }
+        isSaving = true
+        let newValue = !isComplete
+        isComplete = newValue
+        completedDays = max(0, completedDays + (newValue ? 1 : -1))
+        _Concurrency.Task { @MainActor in
+            await firebaseService.markTaskComplete(taskId: task.id, pigeonId: pigeonId, date: todayKey, isComplete: newValue)
+            await loadState()   // reconcile with what was actually stored
+            if rewardRemindersEnabled {
+                do {
+                    try await RewardNotificationService.shared.refreshUpcomingReminder(
+                        tasks: allTasks,
+                        pigeonId: pigeonId
+                    )
+                } catch {
+                    notificationError = error.localizedDescription
+                }
+            }
+            isSaving = false
+        }
     }
 }
 
@@ -206,7 +303,7 @@ struct NewTaskSheet: View {
                     }
                     
                     Button(action: {
-                        Task {
+                        _Concurrency.Task {
                             let deserving = deservingTitles.enumerated().map { index, title in
                                 (title: title, description: index < deservingDescriptions.count ? deservingDescriptions[index] : "")
                             }
@@ -235,6 +332,6 @@ struct NewTaskSheet: View {
 }
 
 #Preview {
-    DashboardView()
+    DashboardView(taskViewModel: TaskViewModel())
         .environmentObject(FirebaseService.shared)
 }

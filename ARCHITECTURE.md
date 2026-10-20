@@ -1,4 +1,4 @@
-# Proper Discipline App – Architecture Overview
+# Proper Productive Pigeons App – Architecture Overview
 
 ## 🏗️ MVVM Architecture
 

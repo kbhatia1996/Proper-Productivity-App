@@ -14,50 +14,47 @@ class NestViewModel: ObservableObject {
     
     let themeOptions = ["dark_purple", "gold_black", "silver_black"]
     
-    func createNest() async {
-        isLoading = true
+    /// Returns true when the nest was created so the sheet knows whether to close
+    @discardableResult
+    func createNest() async -> Bool {
+        guard !isLoading else { return false }
         errorMessage = ""
         
-        guard !nestName.isEmpty else {
+        let name = nestName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else {
             errorMessage = "Nest name is required"
-            isLoading = false
-            return
+            return false
         }
         
-        let nest = await firebaseService.createNest(
-            name: nestName,
-            theme: nestTheme
-        )
-        
-        if nest == nil {
+        isLoading = true
+        defer { isLoading = false }
+        guard await firebaseService.createNest(name: name, theme: nestTheme) != nil else {
             errorMessage = firebaseService.errorMessage ?? "Failed to create nest"
-        } else {
-            showCreateNest = false
-            nestName = ""
+            return false
         }
-        
-        isLoading = false
+        showCreateNest = false
+        nestName = ""
+        return true
     }
     
-    func joinNest() async {
-        isLoading = true
+    @discardableResult
+    func joinNest() async -> Bool {
+        guard !isLoading else { return false }
         errorMessage = ""
         
-        guard !inviteCode.isEmpty else {
+        guard !inviteCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             errorMessage = "Invite code is required"
-            isLoading = false
-            return
+            return false
         }
         
-        let nest = await firebaseService.joinNest(inviteCode: inviteCode)
-        
-        if nest == nil {
+        isLoading = true
+        defer { isLoading = false }
+        guard await firebaseService.joinNest(inviteCode: inviteCode) != nil else {
             errorMessage = firebaseService.errorMessage ?? "Failed to join nest"
-        } else {
-            showJoinNest = false
-            inviteCode = ""
+            return false
         }
-        
-        isLoading = false
+        showJoinNest = false
+        inviteCode = ""
+        return true
     }
 }

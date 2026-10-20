@@ -13,7 +13,7 @@ struct Achievement: Identifiable, Codable {
         case checkpoint_unlock      // Hit a checkpoint
         case weekly_perfect         // 7/7 days all tasks
         case couple_milestone       // Both pigeons hit checkpoint together
-        case rank_up                // Rank advanced
+        case consistency_streak     // Consistency milestone reached
         case first_deserving        // First deserving claimed
     }
     
