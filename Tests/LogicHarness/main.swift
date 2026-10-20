@@ -299,18 +299,24 @@ func runAll() async {
         let vm = NestViewModel()
         svc.nestShouldSucceed = true
         vm.nestName = "   "
-        check(await vm.createNest() == false && vm.errorMessage == "Nest name is required", "blank nest name rejected")
+        let result1 = await vm.createNest()
+        check(result1 == false && vm.errorMessage == "Nest name is required", "blank nest name rejected")
         vm.nestName = "Home"
-        check(await vm.createNest() == true && vm.nestName.isEmpty, "create succeeds & clears form")
+        let result2 = await vm.createNest()
+        check(result2 == true && vm.nestName.isEmpty, "create succeeds & clears form")
         svc.nestShouldSucceed = false
         vm.nestName = "Home"
-        check(await vm.createNest() == false && vm.errorMessage == "Permission denied", "create failure keeps sheet open + message")
+        let result3 = await vm.createNest()
+        check(result3 == false && vm.errorMessage == "Permission denied", "create failure keeps sheet open + message")
         vm.inviteCode = " "
-        check(await vm.joinNest() == false && vm.errorMessage == "Invite code is required", "blank code rejected")
+        let result4 = await vm.joinNest()
+        check(result4 == false && vm.errorMessage == "Invite code is required", "blank code rejected")
         vm.inviteCode = "zzz999"
-        check(await vm.joinNest() == false && vm.errorMessage == "Invalid invite code", "bad code message")
+        let result5 = await vm.joinNest()
+        check(result5 == false && vm.errorMessage == "Invalid invite code", "bad code message")
         svc.nestShouldSucceed = true
-        check(await vm.joinNest() == true, "join succeeds")
+        let result6 = await vm.joinNest()
+        check(result6 == true, "join succeeds")
     }
 
     print("\nPassed: \(passed)   Failed: \(failed)")
