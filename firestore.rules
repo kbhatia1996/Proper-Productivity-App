@@ -41,7 +41,9 @@ service cloud.firestore {
 
     // Check-ins: you write your own; nest members can read each other's (shared goals need both)
     match /task_completions/{id} {
-      allow read: if isTaskMember(resource.data.task_id);
+      // A missing document has no resource, so allow the pre-write read a check-in transaction performs
+      allow get: if signedIn() && (resource == null || isTaskMember(resource.data.task_id));
+      allow list: if signedIn() && isTaskMember(resource.data.task_id);
       allow create: if isTaskMember(request.resource.data.task_id)
         && request.resource.data.pigeon_id == request.auth.uid;
       allow update: if isTaskMember(resource.data.task_id)
