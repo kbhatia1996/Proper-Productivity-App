@@ -6,6 +6,11 @@ service cloud.firestore {
     function isMember(nestId) {
       return signedIn() && request.auth.uid in get(/databases/$(database)/documents/nests/$(nestId)).data.pigeons;
     }
+    function isTaskMember(taskId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/tasks/$(taskId))
+        && isMember(get(/databases/$(database)/documents/tasks/$(taskId)).data.nest_id);
+    }
 
     // A profile is private to its owner
     match /pigeons/{uid} {
@@ -36,10 +41,13 @@ service cloud.firestore {
 
     // Check-ins: you write your own; nest members can read each other's (shared goals need both)
     match /task_completions/{id} {
-      allow read: if signedIn() && (
-        resource.data.pigeon_id == request.auth.uid
-        || isMember(get(/databases/$(database)/documents/tasks/$(resource.data.task_id)).data.nest_id));
-      allow create, update: if signedIn() && request.resource.data.pigeon_id == request.auth.uid;
+      allow read: if isTaskMember(resource.data.task_id);
+      allow create: if isTaskMember(request.resource.data.task_id)
+        && request.resource.data.pigeon_id == request.auth.uid;
+      allow update: if isTaskMember(resource.data.task_id)
+        && resource.data.pigeon_id == request.auth.uid
+        && request.resource.data.pigeon_id == request.auth.uid
+        && request.resource.data.task_id == resource.data.task_id;
     }
 
     match /claimed_deservings/{id} {

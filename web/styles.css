@@ -141,6 +141,11 @@ a { color: inherit; text-decoration: none; }
 .user-meta { flex: 1; }
 .icon-button, .theme-button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; }
 .icon-button:hover, .theme-button:hover { color: var(--gold); }
+.signout-control, .signout-mobile { display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; transition: color .18s, border-color .18s, background .18s; }
+.signout-control { padding: 7px 9px; font-size: 9px; font-weight: 600; white-space: nowrap; }
+.signout-control:hover, .signout-mobile:hover { border-color: color-mix(in srgb, var(--danger) 45%, var(--border)); background: color-mix(in srgb, var(--danger) 8%, transparent); color: var(--danger); }
+.signout-control svg, .signout-mobile svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.signout-mobile { display: none; width: 32px; height: 32px; }
 .app-main { min-height: 100vh; margin-left: 236px; }
 .topbar { position: sticky; z-index: 1; top: 0; display: flex; height: 68px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding: 0 4.4vw; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(16px); }
 .breadcrumb { display: flex; align-items: center; gap: 10px; color: var(--quiet); font-size: 11px; }
@@ -317,6 +322,7 @@ a { color: inherit; text-decoration: none; }
   .topbar { height: 57px; padding: 0 17px; }
   .date-pill { font-size: 9px; }
   .topbar-actions { gap: 8px; }
+  .signout-mobile { display: grid; }
   .page-content { padding: 27px 17px 35px; }
   .welcome-row { display: block; }
   .welcome-row h1, .activity-heading h1 { font-size: 37px; }
@@ -342,4 +348,9 @@ a { color: inherit; text-decoration: none; }
   .activity-aside { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .modal-card { padding: 23px 18px; }
+}
+@media (max-width: 380px) {
+  .topbar { padding-right: 12px; padding-left: 12px; }
+  .breadcrumb span, .breadcrumb b, .date-pill { display: none; }
+  .topbar-actions { gap: 6px; }
 }

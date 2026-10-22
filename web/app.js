@@ -61,6 +61,7 @@ let nestUnsubscribe;
 let tasksUnsubscribe;
 let completionListeners = new Map();
 let toastTimer;
+const signOutIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>';
 
 function localDateKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -185,12 +186,12 @@ function renderApp() {
         </nav>
         <div class="sidebar-spacer"></div>
         <div class="nest-mini"><span class="nest-mini-icon">✦</span><div><b>${escapeHtml(state.nest.name)}</b><small>${state.nest.pigeons?.length || 1} / 2 members</small></div></div>
-        <div class="sidebar-profile"><div class="user-avatar">${escapeHtml(state.profile.avatar || "🐦")}</div><div class="user-meta"><b>${name}</b><small>${escapeHtml(consistencyLabel(state.profile.total_tasks_completed || 0))}</small></div><button class="icon-button" data-action="signout" title="Sign out" aria-label="Sign out">↗</button></div>
+        <div class="sidebar-profile"><div class="user-avatar">${escapeHtml(state.profile.avatar || "🐦")}</div><div class="user-meta"><b>${name}</b><small>${escapeHtml(consistencyLabel(state.profile.total_tasks_completed || 0))}</small></div><button class="signout-control" data-action="signout">${signOutIcon}<span>Sign out</span></button></div>
       </aside>
       <div class="app-main">
         <header class="topbar">
           <div class="breadcrumb"><span>Workspace</span><b>/</b><strong>${state.screen === "activity" ? "Activity" : "Today"}</strong></div>
-          <div class="topbar-actions"><span class="date-pill"><span class="live-dot"></span>${new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(new Date())}</span><button class="theme-button" data-action="theme" aria-label="Toggle color theme">${state.theme === "dark" ? "☼" : "☾"}</button><div class="user-avatar top-avatar">${escapeHtml(state.profile.avatar || "🐦")}</div><button class="theme-button" data-action="signout" aria-label="Sign out" title="Sign out">↗</button></div>
+          <div class="topbar-actions"><span class="date-pill"><span class="live-dot"></span>${new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(new Date())}</span><button class="theme-button" data-action="theme" aria-label="Toggle color theme">${state.theme === "dark" ? "☼" : "☾"}</button><div class="user-avatar top-avatar">${escapeHtml(state.profile.avatar || "🐦")}</div><button class="signout-mobile" data-action="signout" aria-label="Sign out" title="Sign out">${signOutIcon}</button></div>
         </header>
         <main class="page-content">
           ${state.error ? `<div class="alert error" role="alert">${escapeHtml(state.error)}<button data-action="dismiss-error" aria-label="Dismiss">×</button></div>` : ""}
@@ -403,7 +404,7 @@ function friendlyError(error) {
     "auth/invalid-email": "Enter a valid email address.",
     "auth/weak-password": "Choose a password with at least 6 characters.",
     "auth/too-many-requests": "Too many attempts. Wait a little and try again.",
-    "permission-denied": "Firebase denied this action. Check the Firestore rules and your nest membership.",
+    "permission-denied": "Firebase rejected this request. In Firebase Console → Firestore Database → Rules, publish the current repository firestore.rules file, then reload the website.",
     "unavailable": "Firebase is temporarily unavailable. Check your connection and try again.",
   };
   return messages[code] || error?.message || "Something went wrong. Please try again.";
@@ -474,11 +475,11 @@ function subscribeTasks(nestId) {
           return [`${completion.pigeon_id}_${completion.date}`, completion];
         }));
         render();
-      }, (error) => showMessage(friendlyError(error))));
+      }, (error) => showMessage(`Could not load check-ins. ${friendlyError(error)}`)));
     }
     state.tasks = tasks;
     render();
-  }, (error) => showMessage(friendlyError(error)));
+  }, (error) => showMessage(`Could not load goals. ${friendlyError(error)}`));
 }
 
 async function createNest(form) {
@@ -641,7 +642,9 @@ async function toggleTask(taskId) {
     showMessage(complete ? "Check-in saved. Keep that promise to yourself." : "Check-in removed.", "success");
   } catch (error) {
     state.busy = false;
-    state.error = friendlyError(error);
+    state.error = error?.code === "permission-denied"
+      ? `Check-in was not saved. ${friendlyError(error)}`
+      : friendlyError(error);
     render();
   }
 }
