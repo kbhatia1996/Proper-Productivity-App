@@ -96,6 +96,10 @@ a { color: inherit; text-decoration: none; }
 .form-stack textarea { padding-top: 11px; resize: vertical; }
 .form-stack input::placeholder, .form-stack textarea::placeholder, .setup-card input::placeholder { color: var(--quiet); }
 .form-stack input:focus, .form-stack textarea:focus, .form-stack select:focus, .setup-card input:focus { border-color: var(--gold); outline: 0; }
+.auth-divider { display: flex; align-items: center; gap: 12px; margin: 18px 0 14px; color: var(--quiet); font-size: 10px; text-transform: uppercase; }
+.auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.google-button { display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid var(--border); background: var(--surface-soft); color: var(--text); cursor: pointer; }
+.google-button:disabled { opacity: .6; cursor: not-allowed; }
 .auth-note { margin: 20px 0 0; color: var(--quiet); text-align: center; font-size: 10px; }
 .mobile-brand { display: none; }
 .field-label { margin: -1px 0 -7px; color: var(--muted); font-size: 11px; font-weight: 600; }

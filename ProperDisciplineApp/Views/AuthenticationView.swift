@@ -122,6 +122,27 @@ struct AuthenticationView: View {
                 .disabled(viewModel.isLoading)
                 .padding(.horizontal)
                 
+                HStack {
+                    Rectangle().fill(SoloLevellingTheme.silverWhite.opacity(0.25)).frame(height: 1)
+                    Text("or")
+                        .font(.system(size: 12))
+                        .foregroundColor(SoloLevellingTheme.silverWhite.opacity(0.6))
+                    Rectangle().fill(SoloLevellingTheme.silverWhite.opacity(0.25)).frame(height: 1)
+                }
+                .padding(.horizontal)
+                
+                Button(action: {
+                    _Concurrency.Task { await viewModel.signInWithGoogle() }
+                }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "globe")
+                        Text("Continue with Google")
+                    }
+                }
+                .modifier(ThemeButton(style: .secondary))
+                .disabled(viewModel.isLoading)
+                .padding(.horizontal)
+                
                 Spacer()
             }
         }

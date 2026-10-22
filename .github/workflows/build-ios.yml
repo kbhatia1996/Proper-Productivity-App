@@ -43,6 +43,9 @@ jobs:
 
       - name: Generate Xcode project
         run: |
+          # Registers Google's sign-in redirect URL scheme from the Firebase plist
+          echo "GOOGLE_REVERSED_CLIENT_ID=$(/usr/libexec/PlistBuddy -c 'Print :REVERSED_CLIENT_ID' ProperDisciplineApp/GoogleService-Info.plist)" >> "$GITHUB_ENV"
+          export GOOGLE_REVERSED_CLIENT_ID=$(/usr/libexec/PlistBuddy -c 'Print :REVERSED_CLIENT_ID' ProperDisciplineApp/GoogleService-Info.plist)
           brew install xcodegen
           xcodegen generate
 

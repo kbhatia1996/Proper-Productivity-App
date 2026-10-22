@@ -77,6 +77,17 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    func signInWithGoogle() async {
+        guard !isLoading else { return }
+        errorMessage = ""
+        isLoading = true
+        defer { isLoading = false }
+        let ok = await firebaseService.signInWithGoogle(avatar: selectedAvatar)
+        if !ok, let message = firebaseService.errorMessage {
+            errorMessage = message
+        }
+    }
+    
     func signOut() {
         firebaseService.signOut()
     }

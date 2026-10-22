@@ -1,5 +1,6 @@
 import SwiftUI
 import FirebaseCore
+import GoogleSignIn
 
 @main
 struct ProperDisciplineAppApp: App {
@@ -44,6 +45,9 @@ struct ProperDisciplineAppApp: App {
                 }
             }
             .preferredColorScheme(appAppearance == "light" ? .light : .dark)
+            .onOpenURL { url in
+                GIDSignIn.sharedInstance.handle(url)
+            }
             .overlay(alignment: .topTrailing) {
                 if !firebaseService.isAuthenticated || firebaseService.currentPigeon?.nestId == nil {
                     Button {

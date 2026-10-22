@@ -17,6 +17,7 @@ Podfile.lock
 
 # Firebase
 GoogleService-Info.plist
+ProperDisciplineApp/Info.plist
 web/firebase-config.js
 
 # Environment & Secrets

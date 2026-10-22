@@ -2,8 +2,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
@@ -11,6 +13,7 @@ import {
   arrayUnion,
   collection,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   increment,
@@ -108,6 +111,8 @@ function clearListeners() {
   state.completions = {};
 }
 
+const googleIcon = `<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.9-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>`;
+
 function renderAuth() {
   const signup = state.authMode === "signup";
   return `
@@ -140,6 +145,8 @@ function renderAuth() {
             <label>Password<input name="password" type="password" autocomplete="${signup ? "new-password" : "current-password"}" placeholder="At least 6 characters" minlength="6" required /></label>
             <button class="button primary full" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Please wait…" : signup ? "Create account" : "Sign in"} <span>↗</span></button>
           </form>
+          <div class="auth-divider"><span>or</span></div>
+          <button type="button" class="button google-button full" data-action="google-signin" ${state.busy ? "disabled" : ""}>${googleIcon}<span>Continue with Google</span></button>
           <p class="auth-note">Your progress is securely synced with your Firebase account.</p>
         </div>
       </section>
@@ -396,6 +403,37 @@ async function handleAuthSubmit(form) {
   }
 }
 
+async function handleGoogleSignIn() {
+  state.busy = true;
+  state.error = "";
+  render();
+  try {
+    const credential = await signInWithPopup(auth, new GoogleAuthProvider());
+    const user = credential.user;
+    const profileRef = doc(db, "pigeons", user.uid);
+    if (!(await getDoc(profileRef)).exists()) {
+      await setDoc(profileRef, {
+        id: user.uid,
+        email: user.email || "",
+        name: (user.displayName || (user.email || "").split("@")[0] || "Pigeon").slice(0, 40),
+        avatar: state.avatar,
+        total_tasks_completed: 0,
+        nest_id: null,
+        created_at: new Date(),
+        last_active_at: new Date(),
+      });
+    }
+  } catch (error) {
+    state.busy = false;
+    if (error?.code === "auth/popup-closed-by-user" || error?.code === "auth/cancelled-popup-request") {
+      state.error = "";
+    } else {
+      state.error = friendlyError(error);
+    }
+    render();
+  }
+}
+
 function friendlyError(error) {
   const code = error?.code || "";
   const messages = {
@@ -403,6 +441,10 @@ function friendlyError(error) {
     "auth/invalid-credential": "That email and password combination wasn't recognized.",
     "auth/invalid-email": "Enter a valid email address.",
     "auth/weak-password": "Choose a password with at least 6 characters.",
+    "auth/popup-blocked": "Your browser blocked the Google sign-in window. Allow pop-ups for this site and try again.",
+    "auth/unauthorized-domain": "This website's domain isn't authorized. In Firebase Console → Authentication → Settings → Authorized domains, add it.",
+    "auth/operation-not-allowed": "Google sign-in isn't enabled. In Firebase Console → Authentication → Sign-in method, enable Google.",
+    "auth/account-exists-with-different-credential": "An account already exists with this email using a different sign-in method.",
     "auth/too-many-requests": "Too many attempts. Wait a little and try again.",
     "permission-denied": "Firebase rejected this request. In Firebase Console → Firestore Database → Rules, publish the current repository firestore.rules file, then reload the website.",
     "unavailable": "Firebase is temporarily unavailable. Check your connection and try again.",
@@ -711,6 +753,8 @@ root.addEventListener("click", async (event) => {
     state.authMode = button.dataset.mode;
     state.error = "";
     render();
+  } else if (action === "google-signin") {
+    await handleGoogleSignIn();
   } else if (action === "avatar") {
     state.avatar = button.dataset.avatar;
     render();

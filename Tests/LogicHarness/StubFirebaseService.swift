@@ -33,6 +33,17 @@ final class FirebaseService: NSObject, ObservableObject {
         if !authShouldSucceed { errorMessage = authError; return false }
         return true
     }
+    var googleCalls = 0
+    var googleAvatars: [String] = []
+    var googleCancelled = false
+    func signInWithGoogle(avatar: String) async -> Bool {
+        googleCalls += 1
+        googleAvatars.append(avatar)
+        errorMessage = nil
+        if googleCancelled { return false }
+        if !authShouldSucceed { errorMessage = authError; return false }
+        return true
+    }
     func signOut() { isAuthenticated = false }
     
     func createNest(name: String, theme: String) async -> Nest? {

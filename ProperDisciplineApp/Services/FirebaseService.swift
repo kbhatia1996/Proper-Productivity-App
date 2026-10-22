@@ -2,6 +2,8 @@ import Foundation
 import FirebaseCore
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleSignIn
+import UIKit
 
 /// Firebase access for auth, nests, tasks and completions.
 /// `FirebaseApp.configure()` is called once from the App entry point, before this singleton is first used.
@@ -91,7 +93,70 @@ class FirebaseService: NSObject, ObservableObject {
         }
     }
     
+    /// Signs in (or up) with Google and creates the profile on first use. Returns false if cancelled or failed;
+    /// on failure `errorMessage` explains why (it stays nil when the user just closes the Google sheet).
+    @MainActor
+    @discardableResult
+    func signInWithGoogle(avatar: String) async -> Bool {
+        errorMessage = nil
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            errorMessage = "Google sign-in isn't set up. Enable Google in Firebase Authentication, then download a fresh GoogleService-Info.plist."
+            return false
+        }
+        guard let presenter = Self.topViewController() else {
+            errorMessage = "Couldn't open Google sign-in. Please try again."
+            return false
+        }
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
+        do {
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
+            guard let idToken = result.user.idToken?.tokenString else {
+                errorMessage = "Google didn't return a sign-in token. Please try again."
+                return false
+            }
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: result.user.accessToken.tokenString)
+            let authResult = try await Auth.auth().signIn(with: credential)
+            try await createProfileIfMissing(for: authResult.user, avatar: avatar)
+            return true
+        } catch {
+            let nsError = error as NSError
+            if nsError.domain == kGIDSignInErrorDomain && nsError.code == GIDSignInError.canceled.rawValue {
+                return false
+            }
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+    
+    private func createProfileIfMissing(for user: User, avatar: String) async throws {
+        let ref = db.collection("pigeons").document(user.uid)
+        guard !(try await ref.getDocument()).exists else { return }
+        let email = user.email ?? ""
+        let fallbackName = email.split(separator: "@").first.map(String.init) ?? "Pigeon"
+        let displayName = (user.displayName ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let pigeon = Pigeon(
+            id: user.uid,
+            email: email,
+            name: displayName.isEmpty ? fallbackName : displayName,
+            avatar: avatar,
+            createdAt: Date(),
+            lastActiveAt: Date()
+        )
+        try await ref.setData(from: pigeon)
+    }
+    
+    @MainActor
+    private static func topViewController() -> UIViewController? {
+        let scene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive }
+        var top = scene?.windows.first(where: \.isKeyWindow)?.rootViewController
+        while let presented = top?.presentedViewController { top = presented }
+        return top
+    }
+    
     func signOut() {
+        GIDSignIn.sharedInstance.signOut()
         do {
             try Auth.auth().signOut()
         } catch {

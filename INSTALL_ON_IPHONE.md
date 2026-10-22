@@ -10,13 +10,15 @@ signing and TestFlight, but is not required.
 ## 1. Create the Firebase backend (10 min)
 
 1. https://console.firebase.google.com → **Add project**.
-2. **Build → Authentication → Get started → Email/Password → Enable.**
+2. **Build → Authentication → Get started → Sign-in method → enable Email/Password and Google** (pick a support email for Google).
+   Download the iOS `GoogleService-Info.plist` *after* enabling Google so it contains `CLIENT_ID` and `REVERSED_CLIENT_ID`.
 3. **Build → Firestore Database → Create database** (production mode, any region).
 4. Firestore → **Rules** tab → paste the contents of [`firestore.rules`](./firestore.rules) → **Publish**.
 5. **Project settings → Your apps → Add app → iOS.**
    - Bundle ID: pick something unique, e.g. `com.<yourname>.properproductivepigeons`.
    - Put the *same* id in [`project.yml`](./project.yml) (`PRODUCT_BUNDLE_IDENTIFIER`).
    - Download `GoogleService-Info.plist`.
+   For local builds, run `export GOOGLE_REVERSED_CLIENT_ID=$(/usr/libexec/PlistBuddy -c "Print :REVERSED_CLIENT_ID" ProperDisciplineApp/GoogleService-Info.plist)` before `xcodegen generate`; the CI workflow does this for you.
 
 ## 2. Let GitHub build the app
 

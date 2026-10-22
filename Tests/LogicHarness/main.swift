@@ -277,6 +277,18 @@ func runAll() async {
         check(vm.errorMessage.isEmpty, "no stale error after later success (got '\(vm.errorMessage)')")
         check(vm.password.isEmpty, "password cleared after success")
         
+        svc.googleCalls = 0; svc.googleAvatars = []; svc.googleCancelled = false
+        vm.selectedAvatar = "🦉"; vm.errorMessage = ""
+        await vm.signInWithGoogle()
+        check(svc.googleCalls == 1 && svc.googleAvatars == ["🦉"] && vm.errorMessage.isEmpty, "google sign-in passes chosen avatar")
+        svc.googleCancelled = true; vm.errorMessage = "old"
+        await vm.signInWithGoogle()
+        check(vm.errorMessage.isEmpty && !vm.isLoading, "cancelled google sign-in shows no error")
+        svc.googleCancelled = false; svc.authShouldSucceed = false
+        await vm.signInWithGoogle()
+        check(vm.errorMessage == svc.authError, "failed google sign-in shows service error")
+        svc.authShouldSucceed = true; vm.selectedAvatar = "🐦"
+        
         vm.name = ""; vm.email = "me@x.co"; vm.password = "abcdef"
         await vm.signUp()
         check(vm.errorMessage == "All fields are required" && svc.signUpCalls == 0, "sign-up needs name")

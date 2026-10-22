@@ -9,6 +9,9 @@ packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
     from: 11.0.0
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: 8.0.0
 targets:
   ProperDisciplineApp:
     type: application
@@ -22,6 +25,16 @@ targets:
         product: FirebaseAuth
       - package: Firebase
         product: FirebaseFirestore
+      - package: GoogleSignIn
+        product: GoogleSignIn
+    info:
+      # Lets Google redirect back to the app after sign-in. The value comes from REVERSED_CLIENT_ID in GoogleService-Info.plist
+      # (see INSTALL_ON_IPHONE.md); it is passed in as an environment variable so the plist itself is never committed.
+      path: ProperDisciplineApp/Info.plist
+      properties:
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - $(GOOGLE_REVERSED_CLIENT_ID)
     settings:
       base:
         # Must be unique to you (change "karan" if you like); use the same id when registering the iOS app in Firebase
@@ -35,3 +48,4 @@ targets:
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
         TARGETED_DEVICE_FAMILY: "1"
+        GOOGLE_REVERSED_CLIENT_ID: ${GOOGLE_REVERSED_CLIENT_ID}
