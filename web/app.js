@@ -50,6 +50,8 @@ const state = {
   busy: false,
   error: "",
   success: "",
+  modalError: "",
+  goalDraft: {},
   theme: readTheme(),
 };
 let auth;
@@ -171,7 +173,6 @@ function renderNestSetup() {
 
 function renderApp() {
   const name = escapeHtml(state.profile.name || "Pigeon");
-  const initials = (state.profile.name || "P").trim().slice(0, 1).toUpperCase();
   const page = state.screen === "activity" ? renderActivity() : renderHome();
   return `
     <div class="app-shell">
@@ -189,7 +190,7 @@ function renderApp() {
       <div class="app-main">
         <header class="topbar">
           <div class="breadcrumb"><span>Workspace</span><b>/</b><strong>${state.screen === "activity" ? "Activity" : "Today"}</strong></div>
-          <div class="topbar-actions"><span class="date-pill"><span class="live-dot"></span>${new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(new Date())}</span><button class="theme-button" data-action="theme" aria-label="Toggle color theme">${state.theme === "dark" ? "☼" : "☾"}</button><div class="user-avatar top-avatar">${escapeHtml(state.profile.avatar || "🐦")}</div></div>
+          <div class="topbar-actions"><span class="date-pill"><span class="live-dot"></span>${new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(new Date())}</span><button class="theme-button" data-action="theme" aria-label="Toggle color theme">${state.theme === "dark" ? "☼" : "☾"}</button><div class="user-avatar top-avatar">${escapeHtml(state.profile.avatar || "🐦")}</div><button class="theme-button" data-action="signout" aria-label="Sign out" title="Sign out">↗</button></div>
         </header>
         <main class="page-content">
           ${state.error ? `<div class="alert error" role="alert">${escapeHtml(state.error)}<button data-action="dismiss-error" aria-label="Dismiss">×</button></div>` : ""}
@@ -234,13 +235,14 @@ function progressFor(task, date = new Date()) {
 }
 
 function taskStreak(task) {
+  const createdKey = localDateKey(asDate(task.created_at));
   let day = new Date();
   if (!ownCompletion(task, day)) {
     day.setDate(day.getDate() - 1);
-    while (day >= asDate(task.created_at) && !isScheduled(task, day)) day.setDate(day.getDate() - 1);
+    while (localDateKey(day) >= createdKey && !isScheduled(task, day)) day.setDate(day.getDate() - 1);
   }
   let streak = 0;
-  for (let count = 0; count < 370 && day >= asDate(task.created_at); count += 1) {
+  for (let count = 0; count < 370 && localDateKey(day) >= createdKey; count += 1) {
     if (!isScheduled(task, day)) {
       day.setDate(day.getDate() - 1);
       continue;
@@ -297,12 +299,14 @@ function renderHome() {
 function renderModal() {
   if (!state.modal) return "";
   if (state.modal === "goal") {
-    return `<div class="modal-backdrop" data-action="close-modal"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="goal-title"><button class="modal-close" data-action="close-modal" aria-label="Close">×</button><p class="eyebrow">BUILD YOUR ROUTINE</p><h2 id="goal-title">Create a new goal</h2><p class="muted">Small, repeatable steps lead to the best rewards.</p>
+    const draft = state.goalDraft;
+    return `<div class="modal-backdrop"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="goal-title"><button class="modal-close" data-action="close-modal" aria-label="Close">×</button><p class="eyebrow">BUILD YOUR ROUTINE</p><h2 id="goal-title">Create a new goal</h2><p class="muted">Small, repeatable steps lead to the best rewards.</p>
+      ${state.modalError ? `<div class="alert error" role="alert">${escapeHtml(state.modalError)}</div>` : ""}
       <form id="goal-form" class="form-stack">
-        <label>Goal name<input name="name" maxlength="60" placeholder="Read for 20 minutes" required /></label>
-        <label>Description <span class="optional">OPTIONAL</span><textarea name="description" maxlength="180" rows="2" placeholder="A little context for your future self"></textarea></label>
-        <div class="form-row"><label>Goal type<select name="taskType"><option value="personal">Personal</option><option value="shared">Shared with my nest</option></select></label><label>Schedule<select name="frequency"><option value="daily">Every day</option><option value="weekly">Once a week</option></select></label></div>
-        <div class="form-row"><label>First reward at<input name="threshold" type="number" min="1" max="365" value="4" required /></label><label>Reward title<input name="reward" maxlength="60" placeholder="A guilt-free movie night" required /></label></div>
+        <label>Goal name<input name="name" maxlength="60" placeholder="Read for 20 minutes" value="${escapeHtml(draft.name || "")}" required /></label>
+        <label>Description <span class="optional">OPTIONAL</span><textarea name="description" maxlength="180" rows="2" placeholder="A little context for your future self">${escapeHtml(draft.description || "")}</textarea></label>
+        <div class="form-row"><label>Goal type<select name="taskType"><option value="personal" ${draft.taskType !== "shared" ? "selected" : ""}>Personal</option><option value="shared" ${draft.taskType === "shared" ? "selected" : ""}>Shared with my nest</option></select></label><label>Schedule<select name="frequency"><option value="daily" ${draft.frequency !== "weekly" ? "selected" : ""}>Every day</option><option value="weekly" ${draft.frequency === "weekly" ? "selected" : ""}>Once a week</option></select></label></div>
+        <div class="form-row"><label>First reward at<input name="threshold" type="number" min="1" max="365" value="${escapeHtml(draft.threshold || "4")}" required /></label><label>Reward title<input name="reward" maxlength="60" placeholder="A guilt-free movie night" value="${escapeHtml(draft.reward || "")}" required /></label></div>
         <button class="button primary full" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Creating…" : "Create goal"} <span>↗</span></button>
       </form></section></div>`;
   }
@@ -544,14 +548,17 @@ async function joinNest(form) {
 
 async function createTask(form) {
   const values = new FormData(form);
+  state.goalDraft = Object.fromEntries(values.entries());
   const name = String(values.get("name") || "").trim();
   const reward = String(values.get("reward") || "").trim();
   const threshold = Number(values.get("threshold"));
   if (!name || !reward || !Number.isInteger(threshold) || threshold < 1) {
-    showMessage("Add a goal name, a reward, and a positive check-in target.");
+    state.modalError = "Add a goal name, a reward, and a positive check-in target.";
+    render();
     return;
   }
   state.busy = true;
+  state.modalError = "";
   render();
   const id = crypto.randomUUID();
   const now = new Date();
@@ -589,11 +596,13 @@ async function createTask(form) {
     });
     state.busy = false;
     state.modal = null;
+    state.modalError = "";
+    state.goalDraft = {};
     state.error = "";
     showMessage("Your new goal is ready. Let's begin.", "success");
   } catch (error) {
     state.busy = false;
-    state.error = friendlyError(error);
+    state.modalError = friendlyError(error);
     render();
   }
 }
@@ -637,6 +646,14 @@ async function toggleTask(taskId) {
   }
 }
 
+async function handleSignOut() {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    showMessage(friendlyError(error));
+  }
+}
+
 function render() {
   document.documentElement.dataset.theme = state.theme;
   if (!state.user) {
@@ -665,6 +682,19 @@ root.addEventListener("submit", async (event) => {
 
 root.addEventListener("input", (event) => {
   if (event.target.name === "inviteCode") event.target.value = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (event.target.form?.id === "goal-form") {
+    state.goalDraft[event.target.name] = event.target.value;
+    state.modalError = "";
+  }
+});
+
+root.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && state.modal) {
+    state.modal = null;
+    state.modalError = "";
+    state.goalDraft = {};
+    render();
+  }
 });
 
 root.addEventListener("click", async (event) => {
@@ -682,7 +712,7 @@ root.addEventListener("click", async (event) => {
     state.avatar = button.dataset.avatar;
     render();
   } else if (action === "signout") {
-    await signOut(auth);
+    await handleSignOut();
   } else if (action === "navigate") {
     state.screen = button.dataset.screen;
     state.error = "";
@@ -698,10 +728,14 @@ root.addEventListener("click", async (event) => {
     render();
   } else if (action === "new-task") {
     state.modal = "goal";
+    state.modalError = "";
+    state.goalDraft = {};
     render();
     root.querySelector('input[name="name"]')?.focus();
   } else if (action === "close-modal") {
     state.modal = null;
+    state.modalError = "";
+    state.goalDraft = {};
     render();
   } else if (action === "toggle-task") {
     await toggleTask(button.dataset.task);
