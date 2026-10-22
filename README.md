@@ -150,6 +150,20 @@ For internal testing distribution:
 2. Build for testflight or direct IPA distribution
 3. Install on test devices
 
+## Website deployment (Render)
+
+The responsive website in [`web/`](./web/) uses Firebase Authentication and the same Firestore collections as the iOS app. It supports account sign-in/sign-up, creating or joining a nest, personal and shared daily/weekly goals, check-ins, and monthly activity history. A Firebase Web app is required in addition to the registered iOS app; both can use the same Firebase project.
+
+1. In Firebase Console, open the same project used by iOS. Under **Project settings → General → Your apps**, select **Add app → Web** and register a web app.
+2. In **Authentication → Sign-in method**, enable **Email/Password**. Confirm the project's Firestore database and the rules in [`firestore.rules`](./firestore.rules) are deployed.
+3. In **Authentication → Settings → Authorized domains**, add the Render domain after the first deployment (for example, `proper-productive-pigeons.onrender.com`).
+4. In Render, choose **New → Blueprint**, connect this repository, and select [`render.yaml`](./render.yaml). Map Firebase's `apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, and `appId` values to `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_MESSAGING_SENDER_ID`, and `FIREBASE_APP_ID`, respectively. The Firebase web config is client-visible by design; never use a service-account key or Admin SDK credentials here.
+5. Deploy. Render runs `scripts/write-firebase-config.mjs` to generate the ignored client config and publishes the `web/` directory. Sign up or sign in with the same account used in iOS to access its profile, nest, goals, and check-ins.
+
+The Firebase Spark (no-cost) plan is generally enough to get started; Firebase applies usage quotas and may require billing if the project outgrows them. Render's free static sites can host the frontend, subject to Render's current plan limits. No Firebase Admin credentials or paid app server are required.
+
+For local development, set the same six `FIREBASE_*` variables in the shell and run `node scripts/write-firebase-config.mjs`, then serve the `web/` directory from a local HTTP server. Do not open `index.html` as a `file://` URL: browser modules and Firebase Auth require an HTTP origin.
+
 ## Future Enhancements
 
 - Health app integration (steps, workouts)

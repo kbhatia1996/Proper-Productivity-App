@@ -68,7 +68,8 @@ TestFlight app. No App Store review for internal testers.
 | App closes after 7 days | Free Apple ID limit → re-sign with Sideloadly |
 | Build fails on Actions | Paste the log; this has not been compiled on iOS before |
 
-## Not the same thing: the web demo
+## Website version
 
-`web-demo.html` is a standalone prototype with built-in sample data. It is *not* the iOS app and does not talk to
-Firebase. Opening it on your phone via "Add to Home Screen" gives an icon, but no real data.
+The responsive Firebase-backed website is in [`web/`](./web/). It can share profiles, nests, tasks, and check-ins
+with iOS when both use the same Firebase project. See the [Render website deployment instructions in README](./README.md#website-deployment-render).
+[`web-demo.html`](./web-demo.html) remains a standalone sample-data prototype and does not sync with Firebase.
